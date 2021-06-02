@@ -5,7 +5,7 @@ using namespace std;
 #ifndef SCHEDULE_H
 #define SCHEDULE_H
 
-typedef unsigned long int timeDate;
+typedef unsigned long long timeDate;
 typedef unsigned int timeMonent;
 
 struct timeScale
@@ -25,6 +25,7 @@ public:
     virtual vector<int> getWDayRank() = 0;
     virtual void eraseWeekRank(int week) = 0;
     virtual void eraseWDayRank(int wday) = 0;
+    virtual schedule *reset(schedule *sp = NULL, timeDate theData = 0) = 0;
 };
 
 struct plan
@@ -40,5 +41,6 @@ extern timeDate g_startDate;        //计划开始日期
 extern vector<timeScale> g_timeTab; //每天时间表
 
 string getTimeMonentText(timeMonent tim);
-
+int getWday(timeDate td);
+int getWeek(timeDate td);
 #endif

@@ -218,26 +218,9 @@ vector<plan>::iterator findDate(timeDate theDate)
     return j;
 }
 
-void addPlan() //添加计划
+void insertPlan(schedule *tmpSchedule)
 {
-    int choice;
-    cout << "您想添加哪种计划？" << endl
-         << "1、课程" << endl;
-    cin >> choice;
-    schedule *tmpSchedule;
-    switch (choice)
-    {
-    case 1:
-        tmpSchedule = course::addCourse();
-        break;
-
-    default:
-        break;
-    }
-
-    vector<int> result = tmpSchedule->getWeekRank();
-
-    for (auto &week : result)
+    for (auto &week : tmpSchedule->getWeekRank())
     {
         for (auto &weekday : tmpSchedule->getWDayRank())
         {
@@ -256,6 +239,25 @@ void addPlan() //添加计划
             }
         }
     }
+}
+
+void addPlan() //添加计划
+{
+    int choice;
+    cout << "您想添加哪种计划？" << endl
+         << "1、课程" << endl;
+    cin >> choice;
+    schedule *tmpSchedule;
+    switch (choice)
+    {
+    case 1:
+        tmpSchedule = course::addCourse();
+        break;
+
+    default:
+        break;
+    }
+    insertPlan(tmpSchedule);
 }
 void removePlan(int week)
 {
@@ -343,6 +345,92 @@ void removePlan(int week)
 
     cout << "***************删除成功*********************" << endl;
 }
+
+void resetPlan(int week)
+{
+    int weekday, planRank;
+    cout << "您想修改周几的计划（1-7）：";
+    cin >> weekday;
+
+    timeDate theDate = g_startDate + week * 7 + weekday - 8;
+    auto it_theDate = findDate(theDate);
+
+    if (it_theDate->Date == theDate)
+        cout << "您想修改第几个计划（1-" << it_theDate->scheduleList.size() << "）：";
+    else
+    {
+        cout << "抱歉，所选的日期没有计划，请先添加吧！" << endl;
+        system("pause");
+        return;
+    }
+
+    cin >> planRank;
+    auto tmpEPschedule = *(it_theDate->scheduleList.begin() + planRank - 1); //要修改的schedule的指针
+    vector<int> tmpWeekRank = tmpEPschedule->getWeekRank();                  //要修改的schedule的周数列表
+    vector<int> tmpWDayRank = tmpEPschedule->getWDayRank();                  //要修改的schedule的一周内天数列表
+    if (tmpWeekRank.size() > 1 || tmpWDayRank.size() > 1)                    //这是一个多次重复计划
+    {
+        //判断合法输入
+        string str;
+        do
+        {
+            cout << "这是一个多次重复计划，是否修改所有这些计划？（yes or no）:";
+            cin >> str;
+        } while (str != "yes" && str != "no");
+        //判断输入yes or no
+        if (str == "yes")
+        {
+            for (auto tmpWeek : tmpWeekRank) //遍历每一个有这个schedule的周数
+            {
+                for (auto tmpWeekDay : tmpWDayRank) //遍历每一个有这个schedule的周中的天数
+                {
+                    //计算日期指针
+                    theDate = g_startDate + tmpWeek * 7 + tmpWeekDay - 8;
+                    auto tmpDate = findDate(theDate);
+                    //遍历当天的schedule找到要删除的schedule并删除
+                    vector<schedule *>::iterator it = tmpDate->scheduleList.begin();
+                    while (it != tmpDate->scheduleList.end())
+                    {
+                        if (*it == tmpEPschedule)
+                        {
+                            tmpDate->scheduleList.erase(it); //在当天schedule列表中删除这个schedule的指针
+                            break;
+                        }
+                        it++;
+                    }
+                    //如果删空了就把这天删了
+                    if (tmpDate->scheduleList.size() == 0)
+                        globalPlan.erase(tmpDate);
+                }
+            }
+
+            insertPlan(tmpEPschedule->reset()); //调用自身函数修改
+        }
+        else //只改一个
+        {
+            //改掉这个schedule的weekRank
+            tmpEPschedule->eraseWeekRank(week);
+            //改掉这个schedule的wDayRank
+            tmpEPschedule->eraseWDayRank(week);
+            it_theDate->scheduleList.erase(it_theDate->scheduleList.begin() + planRank - 1); //在选中天数中删除这个schedule的地址
+            //如果删空了就把这天删了
+            if (it_theDate->scheduleList.size() == 0)
+                globalPlan.erase(it_theDate);
+            insertPlan(tmpEPschedule->reset(tmpEPschedule, theDate)); //改完之后插回去
+        }
+    }
+    else //这不是个多次重复的任务
+    {
+        it_theDate->scheduleList.erase(it_theDate->scheduleList.begin() + planRank - 1);
+        //如果删空了就把这天删了
+        if (it_theDate->scheduleList.size() == 0)
+            globalPlan.erase(it_theDate);
+        insertPlan(tmpEPschedule->reset()); //调用自身函数修改
+    }
+
+    cout << "***************修改成功*********************" << endl;
+}
+
 int main()
 {
     int operation;
@@ -353,7 +441,7 @@ int main()
     {
         listSchedule(week);
         cout << "******请选择操作*******" << endl
-             << "1、增加课程   2、删除课程   3、显示上周课程   4、显示下周课程   5、修改课程   6、退出" << endl;
+             << "1、增加计划   2、删除计划   3、显示上周计划   4、显示下周计划   5、修改计划   6、退出" << endl;
         cin >> operation;
         switch (operation)
         {
@@ -370,7 +458,7 @@ int main()
             ++week;
             break;
         case 5:
-            //globalPlan.reset();
+            resetPlan(week);
             break;
         default:
             break;

@@ -26,7 +26,7 @@ void course::eraseWeekRank(int week)
 
 void course::eraseWDayRank(int wday)
 {
-    return;  //因为课程是单独每天算的，啥也不用动
+    return; //因为课程是单独每天算的，啥也不用动
 }
 
 timeMonent course::getStartTime()
@@ -99,6 +99,80 @@ vector<int> course::getWDayRank()
     vector<int> vec(1);
     vec[0] = courseWeekDay;
     return vec;
+}
+
+schedule *course::reset(schedule *sp, timeDate theData)
+{
+    course *tmpCourseP = new course();
+    if (sp != NULL && theData != 0)
+    {
+        *tmpCourseP = *(course *)sp;
+        vector<int> tmpWeekRank;
+        tmpWeekRank.push_back(getWeek(theData));
+        tmpCourseP->courseWeeks = tmpWeekRank;
+    }
+    else
+    {
+        delete tmpCourseP;
+        tmpCourseP = this;
+    }
+    cout << "您想修改什么？" << endl
+         << "1、时间  2、课程名  3、课程地点" << endl;
+    int option;
+    cin >> option;
+
+    switch (option)
+    {
+    case 1:
+    {
+        int weekday, scheduleRank, scheduleNum;
+        string str;
+        vector<int> result;
+        cout << "请输入课程在周几(1-7)：";
+        cin >> weekday;
+        cout << "请输入课程是第几节课开始(1-" << g_timeTab.size() << ")：";
+        cin >> scheduleRank;
+        cout << "请输入总共持续几节课：(1-" << g_timeTab.size() - scheduleRank + 1 << ")：";
+        cin >> scheduleNum;
+        cout << "请输入上课周数(以逗号分隔)：";
+        cin.ignore(1, '\n');
+        getline(cin, str);
+        size_t pos; //分割字符串
+        str += ','; //扩展字符串以方便操作
+        int size = str.size();
+        for (int i = 0; i < size; i++)
+        {
+            pos = str.find(',', i);
+            if (pos < size)
+            {
+                std::string s = str.substr(i, pos - i);
+                result.push_back(atoi(s.c_str()));
+                i = pos;
+            }
+        }
+        result.erase(unique(result.begin(), result.end()), result.end());
+        // result向量就是上课周数
+        tmpCourseP->courseWeekDay = weekday;
+        tmpCourseP->courseWeeks = result;
+        tmpCourseP->rank = scheduleRank;
+        tmpCourseP->rankNum = scheduleNum;
+        break;
+    }
+    case 2:
+        cout << "请输入课程名：";
+        cin.ignore(1, '\n');
+        getline(cin, tmpCourseP->name);
+        break;
+    case 3:
+        cout << "请输入课程地点：";
+        cin.ignore(1, '\n');
+        getline(cin, tmpCourseP->site);
+        break;
+    default:
+        break;
+    }
+
+    return tmpCourseP;
 }
 
 course::~course()
