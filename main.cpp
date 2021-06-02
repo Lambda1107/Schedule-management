@@ -177,10 +177,10 @@ void listCourse(int week) //显示课程
             b = 1;
             cout << getDataText(a.Date) << " " << getWdayText(getWday(a.Date)) << ':' << endl;
             int i = 1;
-            for (auto &b : a.courseList)
+            for (auto &tmpCourse : a.courseList)
             {
                 cout << i << "、";
-                b.printOut();
+                tmpCourse->printOut();
                 i++;
             }
         }
@@ -243,20 +243,20 @@ void addPlan() //添加课程
         }
     }
     //result向量就是上课周数
-    course tmpCourse(name, site, courseRank, courseNum, result);
+    course *tmpCourse = new course(name, site, courseRank, courseNum, result);
     for (auto &a : result)
     {
         timeDate theDate = g_startDate + a * 7 + weekday - 8;
         auto j = findDate(theDate);
-        if (j != globalPlan.end() && j->Date == theDate)
+        if (j != globalPlan.end() && j->Date == theDate) //判断是否已经有这天的计划了
         {
             j->courseList.push_back(tmpCourse);
         }
         else
         {
-            vector<course> courseList;
-            courseList.push_back(tmpCourse);
-            globalPlan.insert(j, 1, {theDate, courseList});
+            vector<course *> tmpCourseList;
+            tmpCourseList.push_back(tmpCourse);
+            globalPlan.insert(j, 1, {theDate, tmpCourseList});
         }
     }
 }
@@ -276,45 +276,51 @@ void removePlan(int week)
         return;
     }
     cin >> planRank;
-    vector<int> tmpWeekRank = j->courseList[planRank - 1].isMut();
-    if (tmpWeekRank.size() > 1)
+    auto tmpDPcourse = *(j->courseList.begin() + planRank - 1);         //要删除的course的指针
+    vector<int> tmpWeekRank = tmpDPcourse->isMut();                     //要删除的course的周数列表
+    if (tmpWeekRank.size() > 1) //这是一个多次重复计划
     {
         string str;
-        do
+        do //判断合法输入
         {
             cout << "这是一个多次重复计划，是否删除所有这些计划？（yes or no）:";
             cin >> str;
         } while (str != "yes" && str != "no");
         if (str == "yes")
         {
-            for (auto v : tmpWeekRank)
+            for (auto v : tmpWeekRank)                                      //遍历每一个有这个课的周数
             {
                 theDate = g_startDate + v * 7 + weekday - 8;
-                j = findDate(theDate);
-                j->courseList.erase(j->courseList.begin() + planRank - 1);
-                if (j->courseList.size() == 0)
+                auto tmpDate = findDate(theDate);
+                vector<course *>::iterator it = tmpDate->courseList.begin();
+                while (it != tmpDate->courseList.end())                     //遍历当天的课找到要删除的课程并删除
                 {
-                    globalPlan.erase(j);
+                    if (*it == tmpDPcourse)
+                    {
+                        tmpDate->courseList.erase(it);                      //在当天课程列表中删除这个课程的指针
+                        break;
+                    }
+                    it++;
                 }
+                if (tmpDate->courseList.size() == 0)
+                    globalPlan.erase(tmpDate);                              //如果删空了就把这天删了
             }
+            delete tmpDPcourse;                                             //释放这个课程的内存
         }
-        else
+        else                                                                //不要全删了
         {
-            for (auto v : tmpWeekRank)
-            {
-                theDate = g_startDate + v * 7 + weekday - 8;
-                auto i = findDate(theDate);
-                i->courseList[planRank - 1].eraseWRank(week);
-            }
-            j->courseList.erase(j->courseList.begin() + planRank - 1);
-            if (j->courseList.size() == 0)
+            //改掉这个课程的排课周
+            tmpDPcourse->eraseWRank(week);
+            j->courseList.erase(j->courseList.begin() + planRank - 1);      //在选中天数中删除这个课程的地址
+            if (j->courseList.size() == 0)                                  //如果删空了就把这天删了
             {
                 globalPlan.erase(j);
             }
         }
     }
-    else
+    else  //这不是个多次重复的任务
     {
+        delete tmpDPcourse;
         j->courseList.erase(j->courseList.begin() + planRank - 1);
         if (j->courseList.size() == 0)
         {

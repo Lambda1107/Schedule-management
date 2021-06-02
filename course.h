@@ -29,7 +29,7 @@ public:
 struct plan
 {
     timeDate Date;
-    vector<course> courseList;
+    vector<course*> courseList;
 };
 
 #endif
