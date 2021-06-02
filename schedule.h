@@ -26,6 +26,8 @@ public:
     virtual void eraseWeekRank(int week) = 0;
     virtual void eraseWDayRank(int wday) = 0;
     virtual schedule *reset(schedule *sp = NULL, timeDate theData = 0) = 0;
+    virtual string store() = 0;
+    virtual void load(istream &fin) = 0;    
 };
 
 struct plan
@@ -35,12 +37,14 @@ struct plan
 };
 
 //全局变量
-extern vector<plan> globalPlan;     //每天计划的集合
-extern int g_scheduleLong;          //每节课时长 单位分钟
-extern timeDate g_startDate;        //计划开始日期
-extern vector<timeScale> g_timeTab; //每天时间表
+extern vector<plan> globalPlan;            //每天计划的集合
+extern vector<schedule*> globalAllSchedule; //所有计划的集合
+extern int g_scheduleLong;                 //每节课时长 单位分钟
+extern timeDate g_startDate;               //计划开始日期
+extern vector<timeScale> g_timeTab;        //每天时间表
 
 string getTimeMonentText(timeMonent tim);
+void insertPlan(schedule *tmpSchedule);
 int getWday(timeDate td);
 int getWeek(timeDate td);
 #endif

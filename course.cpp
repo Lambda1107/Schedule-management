@@ -3,6 +3,7 @@
 #include <iostream>
 #include <vector>
 #include <algorithm>
+#include <iostream>
 using namespace std;
 
 vector<int> course::getWeekRank()
@@ -89,6 +90,7 @@ course *course::addCourse()
             i = pos;
         }
     }
+    sort(result.begin(), result.end());
     result.erase(unique(result.begin(), result.end()), result.end());
     //result向量就是上课周数
     return (new course(name, site, scheduleRank, scheduleNum, result, weekday));
@@ -173,6 +175,45 @@ schedule *course::reset(schedule *sp, timeDate theData)
     }
 
     return tmpCourseP;
+}
+string course::store()
+{
+    string str = "";
+    str = str + "1\n" + name + "\n" + site + "\n" + to_string(rank) + "\n" + to_string(rankNum) + "\n" + to_string(courseWeekDay) + "\n";
+    for (auto a : courseWeeks)
+    {
+        str += to_string(a);
+        str += ",";
+    }
+    return str;
+}
+void course::load(istream &fin)
+{
+    string str;
+    fin.ignore(1, '\n');
+    getline(fin, name);
+    getline(fin, site);
+    fin >> rank >> rankNum >> courseWeekDay;
+    fin.ignore(1, '\n');
+    getline(fin, str);
+    size_t pos; //分割字符串
+    vector<int> result;
+    str += ','; //扩展字符串以方便操作
+    int size = str.size();
+    for (int i = 0; i < size; i++)
+    {
+        pos = str.find(',', i);
+        if (pos < size)
+        {
+            std::string s = str.substr(i, pos - i);
+            result.push_back(atoi(s.c_str()));
+            i = pos;
+        }
+    }
+    sort(result.begin(), result.end());
+    result.erase(unique(result.begin(), result.end()), result.end());
+    //result向量就是上课周数
+    courseWeeks = result;
 }
 
 course::~course()

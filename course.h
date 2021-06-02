@@ -28,6 +28,8 @@ public:
     void eraseWeekRank(int week);
     void eraseWDayRank(int wday);
     static course *addCourse();
+    string store();
+    void load(istream &fin);
     schedule *reset(schedule *sp = NULL, timeDate theData = 0);
 };
 

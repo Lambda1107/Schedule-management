@@ -20,10 +20,11 @@ using namespace std;
 */
 
 //全局变量
-vector<plan> globalPlan(0);     //每天计划的集合
-int g_scheduleLong = 0;         //每节课时长 单位分钟
-timeDate g_startDate = 0;       //计划开始日期
-vector<timeScale> g_timeTab(0); //每天时间表
+vector<plan> globalPlan(0);              //每天计划的集合
+vector<schedule *> globalAllSchedule(0); //所有计划的集合
+int g_scheduleLong = 0;                  //每节课时长 单位分钟
+timeDate g_startDate = 0;                //计划开始日期
+vector<timeScale> g_timeTab(0);          //每天时间表
 
 string getTimeMonentText(timeMonent tim)
 {
@@ -91,7 +92,8 @@ vector<timeScale> getTimeMapFromText(string str)
     //分割字符串
     size_t pos;
     vector<string> result;
-    str += ','; //扩展字符串以方便操作
+    if (str[str.length() - 1] != ',')
+        str += ','; //扩展字符串以方便操作
     int size = str.size();
     for (int i = 0; i < size; i++)
     {
@@ -122,18 +124,6 @@ bool sortSchedulesFunction(schedule *a, schedule *b)
     return a->getStartTime() < b->getStartTime();
 }
 
-int loadInformation()
-{
-    string tmpInput;
-    ifstream fin;
-    fin.open("data.txt");
-    fin >> g_scheduleLong >> g_startDate;
-    fin.get();
-    getline(fin, tmpInput);
-    g_timeTab = getTimeMapFromText(tmpInput);
-    fin.close();
-    return 1;
-}
 void settingInformation()
 {
     timeDate startDate;
@@ -160,9 +150,6 @@ void settingInformation()
     cout << "*************设置完成！*****************" << endl;
 }
 
-void storeInformation()
-{
-}
 string getDataText(timeDate a)
 {
     time_t t = a * 3600 * 24;
@@ -171,11 +158,61 @@ string getDataText(timeDate a)
     strftime(c, 20, "%d %b", tt);
     return string(c);
 }
+int loadInformation()
+{
+    string tmpInput;
+    ifstream fin;
+    fin.open("data.txt");
+    if (!fin)
+        return -1;
+    fin >> g_scheduleLong >> g_startDate;
+    fin.get();
+    getline(fin, tmpInput);
+    g_timeTab = getTimeMapFromText(tmpInput);
+    int category;
+    while (fin >> category)
+    {
+        schedule *tmpScheduleP;
+        switch (category)
+        {
+        case 1:
+
+            tmpScheduleP = new course();
+            tmpScheduleP->load(fin);
+
+            break;
+
+        default:
+            break;
+        }
+        insertPlan(tmpScheduleP);
+    }
+    fin.close();
+    return 1;
+}
+
+void storeInformation()
+{
+    ofstream fou;
+    fou.open("data.txt");
+    fou << g_scheduleLong << ' ' << g_startDate << '\n';
+    for (auto tmpSchedule : g_timeTab)
+    {
+        fou << getTimeMonentText(tmpSchedule.startTime) << ',';
+    }
+    fou << '\n';
+    for (auto tmpSchedule : globalAllSchedule)
+    {
+        fou << tmpSchedule->store() << '\n';
+    }
+    fou.close();
+}
+
 void listSchedule(int week) //显示课程
 {
     system("cls");
     cout << week << " " << getDataText(g_startDate + week * 7 - 7) << " to " << getDataText(g_startDate + week * 7 - 1) << endl;
-    cout << "=================" << endl;
+    cout << "=================================" << endl;
     bool b = 0;
     for (auto &a : globalPlan)
     {
@@ -239,6 +276,14 @@ void insertPlan(schedule *tmpSchedule)
             }
         }
     }
+    if (find(globalAllSchedule.begin(), globalAllSchedule.end(), tmpSchedule) == globalAllSchedule.end())
+    {
+        globalAllSchedule.push_back(tmpSchedule);
+    }
+}
+void deleteSchedule(schedule *tmpSchedule)
+{
+    globalAllSchedule.erase(find(globalAllSchedule.begin(), globalAllSchedule.end(), tmpSchedule));
 }
 
 void addPlan() //添加计划
@@ -253,7 +298,6 @@ void addPlan() //添加计划
     case 1:
         tmpSchedule = course::addCourse();
         break;
-
     default:
         break;
     }
@@ -307,6 +351,7 @@ void removePlan(int week)
                         if (*it == tmpDPschedule)
                         {
                             tmpDate->scheduleList.erase(it); //在当天schedule列表中删除这个schedule的指针
+                            deleteSchedule(*it);
                             break;
                         }
                         it++;
@@ -324,7 +369,6 @@ void removePlan(int week)
             tmpDPschedule->eraseWeekRank(week);
             //改掉这个schedule的wDayRank
             tmpDPschedule->eraseWDayRank(week);
-
             it_theDate->scheduleList.erase(it_theDate->scheduleList.begin() + planRank - 1); //在选中天数中删除这个课程的地址
             if (it_theDate->scheduleList.size() == 0)                                        //如果删空了就把这天删了
             {
@@ -335,6 +379,7 @@ void removePlan(int week)
     else //这不是个多次重复的任务
     {
         delete tmpDPschedule; //直接释放掉内存
+        deleteSchedule(tmpDPschedule);
         it_theDate->scheduleList.erase(it_theDate->scheduleList.begin() + planRank - 1);
         //如果删空了就把这天删了
         if (it_theDate->scheduleList.size() == 0)
@@ -394,6 +439,7 @@ void resetPlan(int week)
                         if (*it == tmpEPschedule)
                         {
                             tmpDate->scheduleList.erase(it); //在当天schedule列表中删除这个schedule的指针
+                            deleteSchedule(*it);
                             break;
                         }
                         it++;
