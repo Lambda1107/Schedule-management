@@ -6,7 +6,7 @@
 #include <fstream>
 #include <algorithm>
 #include "schedule.h"
-#include "main.h"
+#include "course.h"
 using namespace std;
 /*测试数据
 这周五晚上6点跟曾兆杰去吃烧烤  （arrange类）
@@ -218,54 +218,42 @@ vector<plan>::iterator findDate(timeDate theDate)
     return j;
 }
 
-void addPlan() //添加课程
+void addPlan() //添加计划
 {
-    int weekday, scheduleRank, scheduleNum;
-    string name, site, str;
-    cout << "请输入课程在周几(1-7)：";
-    cin >> weekday;
-    cout << "请输入课程是第几节课开始(1-" << g_timeTab.size() << ")：";
-    cin >> scheduleRank;
-    cout << "请输入总共持续几节课：(1-" << g_timeTab.size() - scheduleRank + 1 << ")：";
-    cin >> scheduleNum;
-    cout << "请输入课程名：";
-    cin.ignore(1, '\n');
-    getline(cin, name);
-    cout << "请输入课程地点：";
-    getline(cin, site);
-    cout << "请输入上课周数(以逗号分隔)：";
-    getline(cin, str);
-    size_t pos; //分割字符串
-    vector<int> result;
-    str += ','; //扩展字符串以方便操作
-    int size = str.size();
-    for (int i = 0; i < size; i++)
+    int choice;
+    cout << "您想添加哪种计划？" << endl
+         << "1、课程" << endl;
+    cin >> choice;
+    schedule *tmpSchedule;
+    switch (choice)
     {
-        pos = str.find(',', i);
-        if (pos < size)
-        {
-            std::string s = str.substr(i, pos - i);
-            result.push_back(atoi(s.c_str()));
-            i = pos;
-        }
+    case 1:
+        tmpSchedule = course::addCourse();
+        break;
+
+    default:
+        break;
     }
-    result.erase(unique(result.begin(), result.end()), result.end());
-    //result向量就是上课周数
-    schedule *tmpSchedule = new schedule(name, site, scheduleRank, scheduleNum, result);
-    for (auto &a : result)
+
+    vector<int> result = tmpSchedule->getWeekRank();
+
+    for (auto &week : result)
     {
-        timeDate theDate = g_startDate + a * 7 + weekday - 8;
-        auto j = findDate(theDate);
-        if (j != globalPlan.end() && j->Date == theDate) //判断是否已经有这天的计划了
+        for (auto &weekday : tmpSchedule->getWDayRank())
         {
-            j->scheduleList.push_back(tmpSchedule);
-            sort(j->scheduleList.begin(), j->scheduleList.end(), sortSchedulesFunction);
-        }
-        else
-        {
-            vector<schedule *> tmpScheduleList;
-            tmpScheduleList.push_back(tmpSchedule);
-            globalPlan.insert(j, 1, {theDate, tmpScheduleList});
+            timeDate theDate = g_startDate + week * 7 + weekday - 8;
+            auto j = findDate(theDate);
+            if (j != globalPlan.end() && j->Date == theDate) //判断是否已经有这天的计划了
+            {
+                j->scheduleList.push_back(tmpSchedule);
+                sort(j->scheduleList.begin(), j->scheduleList.end(), sortSchedulesFunction);
+            }
+            else
+            {
+                vector<schedule *> tmpScheduleList;
+                tmpScheduleList.push_back(tmpSchedule);
+                globalPlan.insert(j, 1, {theDate, tmpScheduleList});
+            }
         }
     }
 }
@@ -276,64 +264,80 @@ void removePlan(int week)
     cin >> weekday;
 
     timeDate theDate = g_startDate + week * 7 + weekday - 8;
-    auto j = findDate(theDate);
-    if (j != globalPlan.end())
-        cout << "您想删除第几个计划（1-" << j->scheduleList.size() << "）：";
+    auto it_theDate = findDate(theDate);
+
+    if (it_theDate->Date == theDate)
+        cout << "您想删除第几个计划（1-" << it_theDate->scheduleList.size() << "）：";
     else
     {
-        cout << "抱歉，所选的日期没有计划，请先添加吧！";
+        cout << "抱歉，所选的日期没有计划，请先添加吧！" << endl;
+        system("pause");
         return;
     }
+
     cin >> planRank;
-    auto tmpDPschedule = *(j->scheduleList.begin() + planRank - 1); //要删除的schedule的指针
-    vector<int> tmpWeekRank = tmpDPschedule->isMut();               //要删除的schedule的周数列表
-    if (tmpWeekRank.size() > 1)                                     //这是一个多次重复计划
+    auto tmpDPschedule = *(it_theDate->scheduleList.begin() + planRank - 1); //要删除的schedule的指针
+    vector<int> tmpWeekRank = tmpDPschedule->getWeekRank();                  //要删除的schedule的周数列表
+    vector<int> tmpWDayRank = tmpDPschedule->getWDayRank();                  //要删除的schedule的一周内天数列表
+    if (tmpWeekRank.size() > 1 || tmpWDayRank.size() > 1)                    //这是一个多次重复计划
     {
+        //判断合法输入
         string str;
-        do //判断合法输入
+        do
         {
             cout << "这是一个多次重复计划，是否删除所有这些计划？（yes or no）:";
             cin >> str;
         } while (str != "yes" && str != "no");
+        //判断输入yes or no
         if (str == "yes")
         {
-            for (auto v : tmpWeekRank) //遍历每一个有这个课的周数
+            for (auto tmpWeek : tmpWeekRank) //遍历每一个有这个schedule的周数
             {
-                theDate = g_startDate + v * 7 + weekday - 8;
-                auto tmpDate = findDate(theDate);
-                vector<schedule *>::iterator it = tmpDate->scheduleList.begin();
-                while (it != tmpDate->scheduleList.end()) //遍历当天的课找到要删除的课程并删除
+                for (auto tmpWeekDay : tmpWDayRank) //遍历每一个有这个schedule的周中的天数
                 {
-                    if (*it == tmpDPschedule)
+                    //计算日期指针
+                    theDate = g_startDate + tmpWeek * 7 + tmpWeekDay - 8;
+                    auto tmpDate = findDate(theDate);
+                    //遍历当天的schedule找到要删除的schedule并删除
+                    vector<schedule *>::iterator it = tmpDate->scheduleList.begin();
+                    while (it != tmpDate->scheduleList.end())
                     {
-                        tmpDate->scheduleList.erase(it); //在当天课程列表中删除这个课程的指针
-                        break;
+                        if (*it == tmpDPschedule)
+                        {
+                            tmpDate->scheduleList.erase(it); //在当天schedule列表中删除这个schedule的指针
+                            break;
+                        }
+                        it++;
                     }
-                    it++;
+                    //如果删空了就把这天删了
+                    if (tmpDate->scheduleList.size() == 0)
+                        globalPlan.erase(tmpDate);
                 }
-                if (tmpDate->scheduleList.size() == 0)
-                    globalPlan.erase(tmpDate); //如果删空了就把这天删了
             }
-            delete tmpDPschedule; //释放这个课程的内存
+            delete tmpDPschedule; //释放这个schedule的内存
         }
         else //不要全删了
         {
-            //改掉这个课程的排课周
-            tmpDPschedule->eraseWRank(week);
-            j->scheduleList.erase(j->scheduleList.begin() + planRank - 1); //在选中天数中删除这个课程的地址
-            if (j->scheduleList.size() == 0)                               //如果删空了就把这天删了
+            //改掉这个schedule的weekRank
+            tmpDPschedule->eraseWeekRank(week);
+            //改掉这个schedule的wDayRank
+            tmpDPschedule->eraseWDayRank(week);
+
+            it_theDate->scheduleList.erase(it_theDate->scheduleList.begin() + planRank - 1); //在选中天数中删除这个课程的地址
+            if (it_theDate->scheduleList.size() == 0)                                        //如果删空了就把这天删了
             {
-                globalPlan.erase(j);
+                globalPlan.erase(it_theDate);
             }
         }
     }
     else //这不是个多次重复的任务
     {
-        delete tmpDPschedule;
-        j->scheduleList.erase(j->scheduleList.begin() + planRank - 1);
-        if (j->scheduleList.size() == 0)
+        delete tmpDPschedule; //直接释放掉内存
+        it_theDate->scheduleList.erase(it_theDate->scheduleList.begin() + planRank - 1);
+        //如果删空了就把这天删了
+        if (it_theDate->scheduleList.size() == 0)
         {
-            globalPlan.erase(j);
+            globalPlan.erase(it_theDate);
         }
     }
 
