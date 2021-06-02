@@ -76,18 +76,24 @@ course *course::addCourse()
     getline(cin, site);
     cout << "请输入上课周数(以逗号分隔)：";
     getline(cin, str);
-    size_t pos; //分割字符串
-    vector<int> result;
-    str += ','; //扩展字符串以方便操作
-    int size = str.size();
-    for (int i = 0; i < size; i++)
+    vector<string> resultStr = splitString(str, ',');
+    vector<int> result(0);
+    for (int i = 0; i < resultStr.size(); i++)
     {
-        pos = str.find(',', i);
-        if (pos < size)
+        size_t pos = resultStr[i].find('-');
+        if (pos == resultStr[i].npos)
         {
-            std::string s = str.substr(i, pos - i);
-            result.push_back(atoi(s.c_str()));
-            i = pos;
+            result.push_back(atoi(resultStr[i].c_str()));
+        }
+        else
+        {
+            int a = atoi(resultStr[i].substr(0, pos).c_str());
+            int b = atoi(resultStr[i].substr(pos + 1).c_str());
+            while (a <= b)
+            {
+                result.push_back(a);
+                a++;
+            }
         }
     }
     sort(result.begin(), result.end());
@@ -197,18 +203,11 @@ void course::load(istream &fin)
     fin.ignore(1, '\n');
     getline(fin, str);
     size_t pos; //分割字符串
-    vector<int> result;
-    str += ','; //扩展字符串以方便操作
-    int size = str.size();
-    for (int i = 0; i < size; i++)
+    vector<string> resultStr = splitString(str, ',');
+    vector<int> result(resultStr.size());
+    for (int i = 0; i < result.size(); i++)
     {
-        pos = str.find(',', i);
-        if (pos < size)
-        {
-            std::string s = str.substr(i, pos - i);
-            result.push_back(atoi(s.c_str()));
-            i = pos;
-        }
+        result[i] = atoi(resultStr[i].c_str());
     }
     sort(result.begin(), result.end());
     result.erase(unique(result.begin(), result.end()), result.end());

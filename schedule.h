@@ -43,8 +43,9 @@ extern int g_scheduleLong;                 //每节课时长 单位分钟
 extern timeDate g_startDate;               //计划开始日期
 extern vector<timeScale> g_timeTab;        //每天时间表
 
-string getTimeMonentText(timeMonent tim);
+string getTimeMonentText(timeMonent tim, char syb = ':');
 void insertPlan(schedule *tmpSchedule);
+vector<string> splitString(string str, char syb);
 int getWday(timeDate td);
 int getWeek(timeDate td);
 #endif

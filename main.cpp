@@ -26,12 +26,12 @@ int g_scheduleLong = 0;                  //每节课时长 单位分钟
 timeDate g_startDate = 0;                //计划开始日期
 vector<timeScale> g_timeTab(0);          //每天时间表
 
-string getTimeMonentText(timeMonent tim)
+string getTimeMonentText(timeMonent tim, char syb)
 {
 
     string str = "";
     str += to_string(tim / 60);
-    str += ":";
+    str += syb;
     str += to_string(tim % 60);
     return str;
 }
@@ -54,6 +54,28 @@ int getWday(timeDate td) //得到星期几
     time_t t = td * 24 * 3600;
     tm *tt = localtime(&t);
     return tt->tm_wday;
+}
+
+vector<string> splitString(string str, char syb)
+{
+    //分割字符串
+    size_t pos;
+    vector<string> result;
+    if (str[str.length() - 1] != syb)
+        str += syb; //扩展字符串以方便操作
+    int size = str.size();
+    for (int i = 0; i < size; i++)
+    {
+        pos = str.find(',', i);
+        if (pos < size)
+        {
+            std::string s = str.substr(i, pos - i);
+            result.push_back(s);
+            i = pos;
+        }
+    }
+    //得到子字符串vector
+    return result;
 }
 
 string getWdayText(int wday) //数字转文字
@@ -89,26 +111,9 @@ string getWdayText(int wday) //数字转文字
 
 vector<timeScale> getTimeMapFromText(string str)
 {
-    //分割字符串
-    size_t pos;
-    vector<string> result;
-    if (str[str.length() - 1] != ',')
-        str += ','; //扩展字符串以方便操作
-    int size = str.size();
-    for (int i = 0; i < size; i++)
-    {
-        pos = str.find(',', i);
-        if (pos < size)
-        {
-            std::string s = str.substr(i, pos - i);
-            result.push_back(s);
-            i = pos;
-        }
-    }
-    //得到子字符串vector
+    vector<string> result = splitString(str, ',');
     vector<timeScale> pts(result.size());
     int hour, min;
-
     for (int i = 0; i < result.size(); i++)
     {
         istringstream istr(result[i]);
@@ -155,7 +160,7 @@ string getDataText(timeDate a)
     time_t t = a * 3600 * 24;
     tm *tt = localtime(&t);
     char c[20];
-    strftime(c, 20, "%d %b", tt);
+    strftime(c, 20, "%b %d", tt);
     return string(c);
 }
 int loadInformation()
@@ -198,7 +203,7 @@ void storeInformation()
     fou << g_scheduleLong << ' ' << g_startDate << '\n';
     for (auto tmpSchedule : g_timeTab)
     {
-        fou << getTimeMonentText(tmpSchedule.startTime) << ',';
+        fou << getTimeMonentText(tmpSchedule.startTime, ' ') << ',';
     }
     fou << '\n';
     for (auto tmpSchedule : globalAllSchedule)
@@ -283,7 +288,9 @@ void insertPlan(schedule *tmpSchedule)
 }
 void deleteSchedule(schedule *tmpSchedule)
 {
-    globalAllSchedule.erase(find(globalAllSchedule.begin(), globalAllSchedule.end(), tmpSchedule));
+    auto it = find(globalAllSchedule.begin(), globalAllSchedule.end(), tmpSchedule);
+    if (it != globalAllSchedule.end())
+        globalAllSchedule.erase(it);
 }
 
 void addPlan() //添加计划
@@ -439,7 +446,6 @@ void resetPlan(int week)
                         if (*it == tmpEPschedule)
                         {
                             tmpDate->scheduleList.erase(it); //在当天schedule列表中删除这个schedule的指针
-                            deleteSchedule(*it);
                             break;
                         }
                         it++;
@@ -449,7 +455,6 @@ void resetPlan(int week)
                         globalPlan.erase(tmpDate);
                 }
             }
-
             insertPlan(tmpEPschedule->reset()); //调用自身函数修改
         }
         else //只改一个
@@ -474,7 +479,7 @@ void resetPlan(int week)
         insertPlan(tmpEPschedule->reset()); //调用自身函数修改
     }
 
-    cout << "***************修改成功*********************" << endl;
+    cout << "*****************修改成功*********************" << endl;
 }
 
 int main()
