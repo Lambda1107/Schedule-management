@@ -5,9 +5,11 @@
 #include <sstream>
 #include <fstream>
 #include <algorithm>
+#include <iomanip>
 #include "schedule.h"
 #include "course.h"
 using namespace std;
+
 /*测试数据
 这周五晚上6点跟曾兆杰去吃烧烤  （arrange类）
 2 4 6 8周的周四晚上有课 新一代网络体系架构 7：00到9：00 （schedule类）
@@ -137,8 +139,7 @@ void settingInformation()
     int year, mon, day;
     time_t t = time(0);
     tm *tmpDate = localtime(&t);
-    cout << "您还没有设置基本信息！" << endl
-         << "请输入您开始上课的第一周星期一的年月日(以空格分隔)：";
+    cout << "请输入您开始上课的第一周星期一的年月日(以空格分隔)：";
     cin >> year >> mon >> day;
     tmpDate->tm_year = year - 1900;
     tmpDate->tm_mon = mon - 1;
@@ -216,20 +217,31 @@ void storeInformation()
 void listSchedule(int week) //显示课程
 {
     system("cls");
-    cout << week << " " << getDataText(g_startDate + week * 7 - 7) << " to " << getDataText(g_startDate + week * 7 - 1) << endl;
-    cout << "=================================" << endl;
+
+    for (int i = 0; i < 50; i++)
+        cout << "●";
+    cout << endl;
+    cout << setw(42) << left << "●"
+         << setw(2) << week << " " << setw(6) << getDataText(g_startDate + week * 7 - 7) << " to " << setw(43) << left << getDataText(g_startDate + week * 7 - 1)
+         << "●" << endl;
+    cout << "●";
+    for (int i = 0; i < 96; i++)
+        cout << "=";
+    cout << "●" << endl;
+
     bool b = 0;
     for (auto &a : globalPlan)
     {
         if (getWeek(a.Date) == week)
         {
             b = 1;
-            cout << getDataText(a.Date) << " " << getWdayText(getWday(a.Date)) << ':' << endl;
+            cout << setw(5) << "●" << setw(5) << getDataText(a.Date) << " " << setw(86) << getWdayText(getWday(a.Date)) + ':' << "●" << endl;
             int i = 1;
             for (auto &tmpSchedule : a.scheduleList)
             {
-                cout << i << "、";
-                tmpSchedule->printOut();
+
+                cout << setw(5)<<"●" << setw(93) << to_string(i) + "、" + tmpSchedule->printOut() << "●" << endl;
+
                 i++;
             }
         }
@@ -238,6 +250,13 @@ void listSchedule(int week) //显示课程
             break;
         }
     }
+    if (!b)
+        cout << setw(42) << left << "●"
+             << "这周还没有课程！"
+             << setw(42) << right << "●" << endl;
+    for (int i = 0; i < 50; i++)
+        cout << "●";
+    cout << endl;
 }
 
 vector<plan>::iterator findDate(timeDate theDate)
@@ -486,13 +505,16 @@ int main()
 {
     int operation;
     if (loadInformation() == -1)
+    {
+        cout << "您还没有设置基本信息！" << endl;
         settingInformation();
+    }
     int week = getWeek(getNowDate());
     do
     {
         listSchedule(week);
         cout << "******请选择操作*******" << endl
-             << "1、增加计划   2、删除计划   3、显示上周计划   4、显示下周计划   5、修改计划   6、退出" << endl;
+             << "1、增加计划\t2、删除计划\t3、显示上周计划\n4、显示下周计划\t5、修改计划\t6、周数跳转\n7、设置信息\t8、保存\t\t9、退出" << endl;
         cin >> operation;
         switch (operation)
         {
@@ -511,9 +533,19 @@ int main()
         case 5:
             resetPlan(week);
             break;
+        case 6:
+            cout << "跳转到（周）：";
+            cin >> week;
+            break;
+        case 7:
+            settingInformation();
+            break;
+        case 8:
+            storeInformation();
+            break;
         default:
             break;
         }
-    } while (operation != 6);
+    } while (operation != 9);
     storeInformation();
 }

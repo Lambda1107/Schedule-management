@@ -40,9 +40,9 @@ timeMonent course::getEndTime()
     return g_timeTab[rank + rankNum - 2].endTime;
 }
 
-void course::printOut()
+string course::printOut()
 {
-    cout << getTimeMonentText(getStartTime()) << " to " << getTimeMonentText(getEndTime()) << " " << name << " at " << site << endl;
+    return getTimeMonentText(getStartTime()) + " to " + getTimeMonentText(getEndTime()) + " " + name + " at " + site;
 }
 
 course::course()

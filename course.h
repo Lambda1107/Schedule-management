@@ -22,7 +22,7 @@ public:
     ~course();
     timeMonent getStartTime();
     timeMonent getEndTime();
-    void printOut();
+    string printOut();
     vector<int> getWeekRank();
     vector<int> getWDayRank();
     void eraseWeekRank(int week);

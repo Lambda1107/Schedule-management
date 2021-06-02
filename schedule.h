@@ -20,7 +20,7 @@ public:
     schedule() {}
     virtual ~schedule() {}
     virtual timeMonent getStartTime() = 0;
-    virtual void printOut() = 0;
+    virtual string printOut() = 0;
     virtual vector<int> getWeekRank() = 0;
     virtual vector<int> getWDayRank() = 0;
     virtual void eraseWeekRank(int week) = 0;
