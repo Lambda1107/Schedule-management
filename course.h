@@ -25,6 +25,7 @@ public:
     string printOut();
     vector<int> getWeekRank();
     vector<int> getWDayRank();
+    timeDate getRecentDate(timeDate theDate);
     void eraseWeekRank(int week);
     void eraseWDayRank(int wday);
     static course *addCourse();

@@ -1,4 +1,4 @@
-#include "course.h"
+#include "schedule.h"
 #include "course.h"
 #include <iostream>
 #include <vector>
@@ -55,6 +55,8 @@ course::course(string _name, string _site, int _rank, int _rankNum, vector<int> 
     site = _site;
     rank = _rank;
     rankNum = _rankNum;
+    sort(_courseWeeks.begin(), _courseWeeks.end());
+    _courseWeeks.erase(unique(_courseWeeks.begin(), _courseWeeks.end()), _courseWeeks.end());
     courseWeeks = _courseWeeks;
     courseWeekDay = _courseWeekDay;
 }
@@ -76,28 +78,7 @@ course *course::addCourse()
     getline(cin, site);
     cout << "请输入上课周数(以逗号分隔)：";
     getline(cin, str);
-    vector<string> resultStr = splitString(str, ',');
-    vector<int> result(0);
-    for (int i = 0; i < resultStr.size(); i++)
-    {
-        size_t pos = resultStr[i].find('-');
-        if (pos == resultStr[i].npos)
-        {
-            result.push_back(atoi(resultStr[i].c_str()));
-        }
-        else
-        {
-            int a = atoi(resultStr[i].substr(0, pos).c_str());
-            int b = atoi(resultStr[i].substr(pos + 1).c_str());
-            while (a <= b)
-            {
-                result.push_back(a);
-                a++;
-            }
-        }
-    }
-    sort(result.begin(), result.end());
-    result.erase(unique(result.begin(), result.end()), result.end());
+    vector<int> result = toIntVec(splitString(str, ','));
     //result向量就是上课周数
     return (new course(name, site, scheduleRank, scheduleNum, result, weekday));
 }
@@ -108,12 +89,40 @@ vector<int> course::getWDayRank()
     vec[0] = courseWeekDay;
     return vec;
 }
-
+timeDate course::getRecentDate(timeDate theDate)
+{
+    int tmpWDay = getWday(theDate);
+    while (tmpWDay != courseWeekDay)
+    {
+        tmpWDay++;
+        theDate++;
+        if (tmpWDay > 7)
+        {
+            tmpWDay = 1;
+        }
+    }
+    bool b = 0;
+    int tmpWeek = getWeek(theDate);
+    for (auto theWeek : courseWeeks)
+    {
+        if (theWeek >= tmpWeek)
+        {
+            b = 1;
+            tmpWeek = theWeek;
+            break;
+        }
+    }
+    if (b)
+        return g_startDate + tmpWeek * 7 + tmpWDay - 8;
+    else
+        return -1;
+}
 schedule *course::reset(schedule *sp, timeDate theData)
 {
-    course *tmpCourseP = new course();
+    course *tmpCourseP;
     if (sp != NULL && theData != 0)
     {
+        tmpCourseP = new course();
         *tmpCourseP = *(course *)sp;
         vector<int> tmpWeekRank;
         tmpWeekRank.push_back(getWeek(theData));
@@ -121,7 +130,6 @@ schedule *course::reset(schedule *sp, timeDate theData)
     }
     else
     {
-        delete tmpCourseP;
         tmpCourseP = this;
     }
     cout << "您想修改什么？" << endl
@@ -145,19 +153,8 @@ schedule *course::reset(schedule *sp, timeDate theData)
         cout << "请输入上课周数(以逗号分隔)：";
         cin.ignore(1, '\n');
         getline(cin, str);
-        size_t pos; //分割字符串
-        str += ','; //扩展字符串以方便操作
-        int size = str.size();
-        for (int i = 0; i < size; i++)
-        {
-            pos = str.find(',', i);
-            if (pos < size)
-            {
-                std::string s = str.substr(i, pos - i);
-                result.push_back(atoi(s.c_str()));
-                i = pos;
-            }
-        }
+        result = toIntVec(splitString(str));
+        sort(result.begin(), result.end());
         result.erase(unique(result.begin(), result.end()), result.end());
         // result向量就是上课周数
         tmpCourseP->courseWeekDay = weekday;
@@ -202,13 +199,7 @@ void course::load(istream &fin)
     fin >> rank >> rankNum >> courseWeekDay;
     fin.ignore(1, '\n');
     getline(fin, str);
-    size_t pos; //分割字符串
-    vector<string> resultStr = splitString(str, ',');
-    vector<int> result(resultStr.size());
-    for (int i = 0; i < result.size(); i++)
-    {
-        result[i] = atoi(resultStr[i].c_str());
-    }
+    vector<int> result = toIntVec(splitString(str, ','));
     sort(result.begin(), result.end());
     result.erase(unique(result.begin(), result.end()), result.end());
     //result向量就是上课周数
