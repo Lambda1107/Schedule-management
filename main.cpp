@@ -29,6 +29,15 @@ vector<schedule *> globalNoPlanSchedule(0); //所有没安排时间计划的集合
 int g_scheduleLong = 0;                     //每节课时长 单位分钟
 timeDate g_startDate = 0;                   //计划开始日期
 vector<timeScale> g_timeTab(0);             //每天时间表
+void strToVar(string str) {}
+template <typename T, typename... Ts>
+void ss(string str, T &var, Ts &...Vars)
+{
+    istringstream ss(str);
+    ss >> var;
+    str.erase(0, str.find(' ') + 1);
+    strToVar(str, Vars...);
+}
 
 string getTimeMonentText(timeMonent tim, char syb)
 {
@@ -179,7 +188,7 @@ int loadInformation()
     if (!fin)
         return -1;
     fin >> g_scheduleLong >> g_startDate;
-    fin.get();
+    fin.ignore(1, '\n');
     getline(fin, tmpInput);
     g_timeTab = getTimeMapFromText(tmpInput);
     int category;
@@ -409,7 +418,7 @@ void addPlan() //添加计划
     cout << "您想添加哪种计划？" << endl
          << "1、课程  2、事项" << endl;
     cin >> choice;
-    schedule *tmpSchedule;
+    schedule *tmpSchedule = NULL;
     switch (choice)
     {
     case 1:
@@ -421,7 +430,8 @@ void addPlan() //添加计划
     default:
         break;
     }
-    insertPlan(tmpSchedule);
+    if (tmpSchedule != NULL)
+        insertPlan(tmpSchedule);
 }
 
 void removePlan(int week)
