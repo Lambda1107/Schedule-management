@@ -33,9 +33,16 @@ void strToVar(string str) {}
 template <typename T, typename... Ts>
 void ss(string str, T &var, Ts &...Vars)
 {
+    while (str[0] == ' ')
+        str.erase(0, 1);
+
     istringstream ss(str);
+    var = 0;
     ss >> var;
-    str.erase(0, str.find(' ') + 1);
+    size_t i = str.find(' ');
+    if (i == str.npos)
+        i = str.length();
+    str.erase(0, i);
     strToVar(str, Vars...);
 }
 
