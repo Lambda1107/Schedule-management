@@ -41,7 +41,7 @@ bool strToVar(string str, T &var, Ts &...Vars)
     istringstream ss(str);
     ss >> var;
     ss >> var;
-    size_t i = str.find(' ');
+    size_t i = str.find(' ', 2);
     if (i == str.npos)
         i = str.length();
     str.erase(0, i);
@@ -164,7 +164,7 @@ bool sortSchedulesByDateFunction(schedule *a, schedule *b)
     return a->getRecentDate(getNowDate()) < b->getRecentDate(getNowDate());
 }
 
-void settingInformation()
+bool settingInformation()
 {
     timeDate startDate;
     string tmpInput;
@@ -174,7 +174,7 @@ void settingInformation()
     tm *tmpDate = localtime(&t);
     cout << "请输入您开始上课的第一周星期一的日期（年 月 日）：";
     if (getLineVar(cin, year, mon, day))
-        return;
+        return 0;
     tmpDate->tm_year = year - 1900;
     tmpDate->tm_mon = mon - 1;
     tmpDate->tm_mday = day;
@@ -182,14 +182,14 @@ void settingInformation()
     g_startDate = startDate;
     cout << "请输入您每节课的时长(分钟)：";
     if (getLineVar(cin, scheduleLong))
-        return;
+        return 0;
 
     g_scheduleLong = scheduleLong;
     cout << "请输入您每节课的上课时间(课之间用逗号隔开)：";
-    cin.get();
     getline(cin, tmpInput);
     g_timeTab = getTimeMapFromText(tmpInput);
     cout << "*************设置完成！*****************" << endl;
+    return 1;
 }
 
 string getDataText(timeDate a)
@@ -241,7 +241,7 @@ int loadInformation()
 void storeInformation()
 {
     ofstream fou;
-    fou.open("data.txt");
+    fou.open("data.txt", ios::out);
     fou << g_scheduleLong << ' ' << g_startDate << '\n';
     for (auto tmpSchedule : g_timeTab)
     {
@@ -263,7 +263,7 @@ void listSchedule(int week) //显示课程
         cout << "●";
     cout << endl;
     cout << setw(42) << left << "●"
-         << setw(2) << week << " " << setw(6) << getDataText(g_startDate + week * 7 - 7) << " to " << setw(43) << left << getDataText(g_startDate + week * 7 - 1)
+         << setw(56) << to_string(week) + " " + getDataText(g_startDate + week * 7 - 7) + " to " + getDataText(g_startDate + week * 7 - 1)
          << "●" << endl;
     cout << "●";
     for (int i = 0; i < 96; i++)
@@ -699,8 +699,12 @@ int main()
     int operation;
     if (loadInformation() == -1)
     {
+        do{
+            system("cls");
         cout << "您还没有设置基本信息！" << endl;
-        settingInformation();
+        }
+        while (!settingInformation());
+      
     }
     int week = getWeek(getNowDate());
     do
