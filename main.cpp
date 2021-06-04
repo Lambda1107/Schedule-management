@@ -325,6 +325,9 @@ vector<int> toIntVec(vector<string> str)
             }
         }
     }
+    sort(result.begin(), result.end());
+    result.erase(unique(result.begin(), result.end()), result.end());
+    result.erase(result.begin(), lower_bound(result.begin(), result.end(), 1));
     return result;
 }
 

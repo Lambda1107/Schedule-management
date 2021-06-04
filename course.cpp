@@ -154,8 +154,6 @@ schedule *course::reset(schedule *sp, timeDate theData)
         cin.ignore(1, '\n');
         getline(cin, str);
         result = toIntVec(splitString(str));
-        sort(result.begin(), result.end());
-        result.erase(unique(result.begin(), result.end()), result.end());
         // result向量就是上课周数
         tmpCourseP->courseWeekDay = weekday;
         tmpCourseP->courseWeeks = result;
@@ -200,8 +198,6 @@ void course::load(istream &fin)
     fin.ignore(1, '\n');
     getline(fin, str);
     vector<int> result = toIntVec(splitString(str, ','));
-    sort(result.begin(), result.end());
-    result.erase(unique(result.begin(), result.end()), result.end());
     //result向量就是上课周数
     courseWeeks = result;
 }
