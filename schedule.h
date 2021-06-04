@@ -45,8 +45,8 @@ extern timeDate g_startDate;                    //计划开始日期
 extern vector<timeScale> g_timeTab;             //每天时间表
 
 //全局函数
-template <typename T, typename... Ts>
-void strToVar(string str, T &var, Ts &...Vars);
+template <typename... Ts>
+bool getLineVar(istream &is, Ts &...Vars);
 string getTimeMonentText(timeMonent tim, char syb = ':');
 void insertPlan(schedule *tmpSchedule);
 vector<string> splitString(string str, char syb = ',');
