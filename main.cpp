@@ -30,32 +30,6 @@ int g_scheduleLong = 0;                     //每节课时长 单位分钟
 timeDate g_startDate = 0;                   //计划开始日期
 vector<timeScale> g_timeTab(0);             //每天时间表
 bool strToVar(string str) { return false; }
-template <typename T, typename... Ts>
-bool strToVar(string str, T &var, Ts &...Vars)
-{
-    while (*(str.begin()) == ' ')
-        str.erase(0, 1);
-    if (*(str.begin()) == 'q' || *(str.begin()) == 'Q')
-        return true;
-    str = "0 " + str;
-    istringstream ss(str);
-    ss >> var;
-    ss >> var;
-    size_t i = str.find(' ', 2);
-    if (i == str.npos)
-        i = str.length();
-    str.erase(0, i);
-    strToVar(str, Vars...);
-    return false;
-}
-
-template <typename... Ts>
-bool getLineVar(istream &is, Ts &...Vars)
-{
-    string str;
-    getline(is, str);
-    return strToVar(str, Vars...);
-}
 
 string getTimeMonentText(timeMonent tim, char syb)
 {

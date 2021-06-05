@@ -45,8 +45,34 @@ extern timeDate g_startDate;                    //计划开始日期
 extern vector<timeScale> g_timeTab;             //每天时间表
 
 //全局函数
+bool strToVar(string str);
+template <typename T, typename... Ts>
+bool strToVar(string str, T &var, Ts &...Vars)
+{
+    while (*(str.begin()) == ' ')
+        str.erase(0, 1);
+    if (*(str.begin()) == 'q' || *(str.begin()) == 'Q')
+        return true;
+    str = "0 " + str;
+    istringstream ss(str);
+    ss >> var;
+    ss >> var;
+    size_t i = str.find(' ', 2);
+    if (i == str.npos)
+        i = str.length();
+    str.erase(0, i);
+    strToVar(str, Vars...);
+    return false;
+}
+
 template <typename... Ts>
-bool getLineVar(istream &is, Ts &...Vars);
+bool getLineVar(istream &is, Ts &...Vars)
+{
+    string str;
+    getline(is, str);
+    return strToVar(str, Vars...);
+}
+
 string getTimeMonentText(timeMonent tim, char syb = ':');
 void insertPlan(schedule *tmpSchedule);
 vector<string> splitString(string str, char syb = ',');
