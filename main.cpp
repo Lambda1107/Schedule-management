@@ -640,6 +640,12 @@ void resetPlan(int week)
             //判断输入yes or no
             if (str == "yes")
             {
+                auto tmpScheduleP = tmpEPschedule->reset();
+                if (tmpScheduleP == NULL)
+                {
+                    return;
+                }
+
                 for (auto tmpDay : tmpRankDate) //遍历每一个有这个schedule的周数
                 {
                     auto it_tmpDate = findDate(tmpDay);
@@ -653,10 +659,15 @@ void resetPlan(int week)
                     if (it_tmpDate->scheduleList.size() == 0)
                         globalPlan.erase(it_tmpDate);
                 }
-                insertPlan(tmpEPschedule->reset()); //调用自身函数修改
+                insertPlan(tmpScheduleP); //改完之后插回去
             }
             else //只改一个
             {
+                auto tmpScheduleP = tmpEPschedule->reset(tmpEPschedule, theDate);
+                if (tmpScheduleP == NULL)
+                {
+                    return;
+                }
                 //改掉这个schedule的rankDate
                 tmpEPschedule->eraseRankDate(theDate);
                 //在选中天数中删除这个schedule的地址
@@ -664,21 +675,25 @@ void resetPlan(int week)
                 //如果删空了就把这天删了
                 if (it_theDate->scheduleList.size() == 0)
                     globalPlan.erase(it_theDate);
-
-                insertPlan(tmpEPschedule->reset(tmpEPschedule, theDate)); //改完之后插回去
+                insertPlan(tmpScheduleP); //改完之后插回去
             }
         }
         else //这不是个多次重复的任务
         {
+
+            auto tmpScheduleP = tmpEPschedule->reset();
+            if (tmpScheduleP == NULL)
+            {
+                return;
+            }
             it_theDate->scheduleList.erase(it_schedule);
             deleteSchedule(tmpEPschedule);
-
             //如果删空了就把这天删了
             if (it_theDate->scheduleList.size() == 0)
                 globalPlan.erase(it_theDate);
 
             //调用自身函数修改
-            insertPlan(tmpEPschedule->reset());
+            insertPlan(tmpScheduleP);
         }
     }
     cout << "*****************修改成功*********************" << endl;

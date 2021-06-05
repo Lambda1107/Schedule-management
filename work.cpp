@@ -72,7 +72,7 @@ timeMonent work::getStartTime()
 
 string work::printOut(timeDate theDate)
 {
-    if (rankTime == 0)
+    if (rankTime / (24 * 60) == 0)
     {
         return "before " + getDataText(DDLDate) + " " + name + " at " + " (" + remark + ")";
     }
@@ -104,16 +104,21 @@ schedule *work::reset(schedule *sp, timeDate theData)
     {
     case 1:
     {
-        int year, mon, day, weekDay, hour, min;
-        cout << "请输入安排的时间（年 月 日 小时 分钟）：";
-        if (getLineVar(cin, year, mon, day, weekDay, hour, min))
+        int year, mon, day, hour, min;
+        cout << "请输入安排的日期：";
+        if (getLineVar(cin, year, mon, day))
+            return NULL;
+        cout << "请输入安排的时间：";
+        if (getLineVar(cin, hour, min))
             return NULL;
         time_t t = 0;
         tm *tmpDate = localtime(&t);
         tmpDate->tm_year = year - 1900;
         tmpDate->tm_mon = mon - 1;
         tmpDate->tm_mday = day;
+
         rankTime = (mktime(tmpDate) / (24 * 3600)) * 24 * 60 + hour * 60 + min;
+
         cout << "请输入需要多长时间（小时 分钟）：";
         if (getLineVar(cin, hour, min))
             return NULL;
