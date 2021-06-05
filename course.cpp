@@ -3,7 +3,6 @@
 #include <iostream>
 #include <vector>
 #include <algorithm>
-#include <iostream>
 using namespace std;
 
 vector<int> course::getWeekRank()
@@ -130,6 +129,7 @@ schedule *course::reset(schedule *sp, timeDate theData)
     }
     else
     {
+        delete tmpCourseP;
         tmpCourseP = this;
     }
     cout << "ÄúÏëÐÞ¸ÄÊ²Ã´£¿" << endl

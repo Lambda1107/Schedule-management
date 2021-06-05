@@ -2,12 +2,12 @@
 #include <ctime>
 #include <vector>
 #include <string>
-#include <sstream>
 #include <fstream>
 #include <algorithm>
 #include <iomanip>
 #include "schedule.h"
 #include "course.h"
+#include "work.h"
 #include "arrange.h"
 using namespace std;
 
@@ -203,6 +203,11 @@ int loadInformation()
             tmpScheduleP->load(fin);
 
             break;
+        case 3:
+            tmpScheduleP = new work();
+            tmpScheduleP->load(fin);
+
+            break;
         default:
             break;
         }
@@ -357,6 +362,8 @@ vector<plan>::iterator findDate(timeDate theDate)
 
 void insertPlan(schedule *tmpSchedule)
 {
+    if (tmpSchedule == NULL)
+        return;
     bool b = 1;
     for (auto &week : tmpSchedule->getWeekRank())
     {
@@ -411,7 +418,7 @@ void addPlan() //添加计划
 {
     int choice;
     cout << "您想添加哪种计划？" << endl
-         << "1、课程  2、事项" << endl;
+         << "1、课程  2、事项 3、作业" << endl;
     if (getLineVar(cin, choice))
         return;
     schedule *tmpSchedule = NULL;
@@ -423,11 +430,13 @@ void addPlan() //添加计划
     case 2:
         tmpSchedule = arrange::addArrange();
         break;
+    case 3:
+        tmpSchedule = work::addWork();
+        break;
     default:
         break;
     }
-    if (tmpSchedule != NULL)
-        insertPlan(tmpSchedule);
+    insertPlan(tmpSchedule);
 }
 
 void removePlan(int week)
@@ -673,12 +682,11 @@ int main()
     int operation;
     if (loadInformation() == -1)
     {
-        do{
+        do
+        {
             system("cls");
-        cout << "您还没有设置基本信息！" << endl;
-        }
-        while (!settingInformation());
-      
+            cout << "您还没有设置基本信息！" << endl;
+        } while (!settingInformation());
     }
     int week = getWeek(getNowDate());
     do

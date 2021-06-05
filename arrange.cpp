@@ -63,6 +63,7 @@ timeDate arrange::getRecentDate(timeDate theDate)
         return -1;
     else
         return DDLDate;
+    //返回最近的安排时间，如果没有就返回DDL时间，如果DDL时间已经过了就返回-1
 }
 
 timeMonent arrange::getStartTime()
@@ -108,6 +109,7 @@ arrange *arrange::addArrange()
         cout << "是否安排时间？（yes or no）:";
         cin >> str;
     } while (str != "yes" && str != "no");
+
     if (str == "yes")
     {
         cout << "事项在哪几周？（有多周可用逗号隔开）：";
@@ -126,33 +128,18 @@ arrange *arrange::addArrange()
         cout << "事项耗时？（时 分）：";
         cin >> hou >> min;
         _rankTime.endTime = _rankTime.startTime + hou * 60 + min;
-        
-        int year, mon, day;
-        time_t t = {};
-        tm *tmpDate = localtime(&t);
-        cout << "请输入事项截止日期（年 月 日）：";
-        cin >> year >> mon >> day;
-        tmpDate->tm_year = year - 1900;
-        tmpDate->tm_mon = mon - 1;
-        tmpDate->tm_mday = day;
-        //核心
-        _DDLDate = mktime(tmpDate) / (24 * 3600); //取得日期时间戳
-        //核心
     }
-    else
-    {
-        int year, mon, day;
-        time_t t = {};
-        tm *tmpDate = localtime(&t);
-        cout << "请输入事项截止日期（年 月 日）：";
-        cin >> year >> mon >> day;
-        tmpDate->tm_year = year - 1900;
-        tmpDate->tm_mon = mon - 1;
-        tmpDate->tm_mday = day;
-        //核心
-        _DDLDate = mktime(tmpDate) / (24 * 3600); //取得日期时间戳
-        //核心
-    }
+    int year, mon, day;
+    time_t t = 0;
+    tm *tmpDate = localtime(&t);
+    cout << "请输入事项截止日期（年 月 日）：";
+    cin >> year >> mon >> day;
+    tmpDate->tm_year = year - 1900;
+    tmpDate->tm_mon = mon - 1;
+    tmpDate->tm_mday = day;
+    //核心
+    _DDLDate = mktime(tmpDate) / (24 * 3600); //取得日期时间戳
+    //核心
     cin.ignore(1, '\n');
     cout << "请输入事件名称：";
     getline(cin, _name);
@@ -243,6 +230,7 @@ schedule *arrange::reset(schedule *sp, timeDate theData)
     }
     else
     {
+        delete tmpArrangeP;
         tmpArrangeP = this;
     }
     cout << "您想修改什么？" << endl

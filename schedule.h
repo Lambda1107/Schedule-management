@@ -1,5 +1,6 @@
 #include <string>
 #include <vector>
+#include <sstream>
 #include <ctime>
 using namespace std;
 #ifndef SCHEDULE_H
@@ -7,6 +8,8 @@ using namespace std;
 
 typedef unsigned long long timeDate;
 typedef unsigned int timeMonent;
+typedef unsigned long long timeDateMonet;
+
 struct timeScale
 {
     timeMonent startTime;
@@ -49,7 +52,7 @@ bool strToVar(string str);
 template <typename T, typename... Ts>
 bool strToVar(string str, T &var, Ts &...Vars)
 {
-    while (*(str.begin()) == ' ')
+    while (*(str.begin()) == ' ' || *(str.begin()) == '\n')
         str.erase(0, 1);
     if (*(str.begin()) == 'q' || *(str.begin()) == 'Q')
         return true;
