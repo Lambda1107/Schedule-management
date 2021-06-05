@@ -5,30 +5,6 @@
 #include <algorithm>
 using namespace std;
 
-vector<int> course::getWeekRank()
-{
-    return courseWeeks;
-}
-
-void course::eraseWeekRank(int week)
-{
-    vector<int>::iterator ite = courseWeeks.begin();
-    while (ite != courseWeeks.end())
-    {
-        if ((*ite) == week)
-        {
-            courseWeeks.erase(ite);
-            break;
-        }
-        ite++;
-    }
-}
-
-void course::eraseWDayRank(int wday)
-{
-    return; //因为课程是单独每天算的，啥也不用动
-}
-
 timeMonent course::getStartTime()
 {
     return g_timeTab[rank - 1].startTime;
@@ -39,7 +15,7 @@ timeMonent course::getEndTime()
     return g_timeTab[rank + rankNum - 2].endTime;
 }
 
-string course::printOut()
+string course::printOut(timeDate theDate)
 {
     return getTimeMonentText(getStartTime()) + " to " + getTimeMonentText(getEndTime()) + " " + name + " at " + site;
 }
@@ -65,13 +41,15 @@ course *course::addCourse()
     int weekday, scheduleRank, scheduleNum;
     string name, site, str;
     cout << "请输入课程在周几(1-7)：";
-    cin >> weekday;
+    if (getLineVar(cin, weekday))
+        return NULL;
     cout << "请输入课程是第几节课开始(1-" << g_timeTab.size() << ")：";
-    cin >> scheduleRank;
+    if (getLineVar(cin, scheduleRank))
+        return NULL;
     cout << "请输入总共持续几节课：(1-" << g_timeTab.size() - scheduleRank + 1 << ")：";
-    cin >> scheduleNum;
+    if (getLineVar(cin, scheduleNum))
+        return NULL;
     cout << "请输入课程名：";
-    cin.ignore(1, '\n');
     getline(cin, name);
     cout << "请输入课程地点：";
     getline(cin, site);
@@ -82,12 +60,6 @@ course *course::addCourse()
     return (new course(name, site, scheduleRank, scheduleNum, result, weekday));
 }
 
-vector<int> course::getWDayRank()
-{
-    vector<int> vec(1);
-    vec[0] = courseWeekDay;
-    return vec;
-}
 timeDate course::getRecentDate(timeDate theDate)
 {
     int tmpWDay = getWday(theDate);
@@ -135,7 +107,8 @@ schedule *course::reset(schedule *sp, timeDate theData)
     cout << "您想修改什么？" << endl
          << "1、时间  2、课程名  3、课程地点" << endl;
     int option;
-    cin >> option;
+    if (getLineVar(cin, option))
+        return NULL;
 
     switch (option)
     {
@@ -145,13 +118,15 @@ schedule *course::reset(schedule *sp, timeDate theData)
         string str;
         vector<int> result;
         cout << "请输入课程在周几(1-7)：";
-        cin >> weekday;
+        if (getLineVar(cin >> weekday))
+            return NULL;
         cout << "请输入课程是第几节课开始(1-" << g_timeTab.size() << ")：";
-        cin >> scheduleRank;
+        if (getLineVar(cin >> scheduleRank))
+            return NULL;
         cout << "请输入总共持续几节课：(1-" << g_timeTab.size() - scheduleRank + 1 << ")：";
-        cin >> scheduleNum;
+        if (getLineVar(cin >> scheduleNum))
+            return NULL;
         cout << "请输入上课周数(以逗号分隔)：";
-        cin.ignore(1, '\n');
         getline(cin, str);
         result = toIntVec(splitString(str));
         // result向量就是上课周数
@@ -163,12 +138,12 @@ schedule *course::reset(schedule *sp, timeDate theData)
     }
     case 2:
         cout << "请输入课程名：";
-        cin.ignore(1, '\n');
+
         getline(cin, tmpCourseP->name);
         break;
     case 3:
         cout << "请输入课程地点：";
-        cin.ignore(1, '\n');
+
         getline(cin, tmpCourseP->site);
         break;
     default:
@@ -191,17 +166,31 @@ string course::store()
 void course::load(istream &fin)
 {
     string str;
-    fin.ignore(1, '\n');
     getline(fin, name);
     getline(fin, site);
-    fin >> rank >> rankNum >> courseWeekDay;
-    fin.ignore(1, '\n');
+    getLineVar(fin, rank, rankNum, courseWeekDay);
     getline(fin, str);
     vector<int> result = toIntVec(splitString(str, ','));
-    //result向量就是上课周数
     courseWeeks = result;
 }
 
 course::~course()
 {
+}
+
+vector<timeDate> course::getRankDate()
+{
+    vector<timeDate> tmpRankDate(0);
+    for (auto week : courseWeeks)
+    {
+        tmpRankDate.push_back(week * 7 + courseWeekDay - 8 + g_startDate);
+    }
+    return tmpRankDate;
+}
+
+void course::eraseRankDate(timeDate theRankDate)
+{
+    int tmpWeek = getWeek(theRankDate);
+    auto findIt = find(courseWeeks.begin(), courseWeeks.end(), theRankDate);
+    courseWeeks.erase(findIt);
 }

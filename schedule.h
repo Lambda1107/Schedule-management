@@ -8,7 +8,7 @@ using namespace std;
 
 typedef unsigned long long timeDate;
 typedef unsigned int timeMonent;
-typedef unsigned long long timeDateMonet;
+typedef unsigned long long timeDateMonent;
 
 struct timeScale
 {
@@ -23,11 +23,9 @@ public:
     virtual ~schedule() {}
     virtual timeMonent getStartTime() = 0;
     virtual timeDate getRecentDate(timeDate theDate) = 0;
-    virtual string printOut() = 0;
-    virtual vector<int> getWeekRank() = 0;
-    virtual vector<int> getWDayRank() = 0;
-    virtual void eraseWeekRank(int week) = 0;
-    virtual void eraseWDayRank(int wday) = 0;
+    virtual string printOut(timeDate theDate = 0) = 0;
+    virtual vector<timeDate> getRankDate() = 0;
+    virtual void eraseRankDate(timeDate theRankDate) = 0;
     virtual schedule *reset(schedule *sp = NULL, timeDate theData = 0) = 0;
     virtual string store() = 0;
     virtual void load(istream &fin) = 0;
@@ -69,7 +67,7 @@ bool strToVar(string str, T &var, Ts &...Vars)
 }
 
 template <typename... Ts>
-bool getLineVar(istream &is, Ts &...Vars)
+bool getLineVar(istream &is, Ts & ...Vars)
 {
     string str;
     getline(is, str);
@@ -84,4 +82,5 @@ int getWeek(timeDate td);
 void removeNoPlanSchedule(schedule *tmpSchedule);
 string getDataText(timeDate a);
 vector<int> toIntVec(vector<string> str);
+vector<timeDate> toDateVec(vector<string> str);
 #endif

@@ -22,12 +22,10 @@ public:
     ~course();
     timeMonent getStartTime();
     timeMonent getEndTime();
-    string printOut();
-    vector<int> getWeekRank();
-    vector<int> getWDayRank();
+    string printOut(timeDate theDate = 0);
+    vector<timeDate> getRankDate();
     timeDate getRecentDate(timeDate theDate);
-    void eraseWeekRank(int week);
-    void eraseWDayRank(int wday);
+    void eraseRankDate(timeDate theRankDate);
     static course *addCourse();
     string store();
     void load(istream &fin);
