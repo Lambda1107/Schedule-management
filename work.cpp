@@ -30,9 +30,9 @@ schedule *work::addWork()
     } while (str != "yes" && str != "no");
     if (str == "yes")
     {
-        int year, mon, day, weekDay, hour, min;
+        int year, mon, day, hour, min;
         cout << "请输入安排的时间（年 月 日 小时 分钟）：";
-        if (getLineVar(cin, year, mon, day, weekDay, hour, min))
+        if (getLineVar(cin, year, mon, day, hour, min))
             return NULL;
         time_t t = 0;
         tm *tmpDate = localtime(&t);
@@ -145,9 +145,7 @@ string work::store()
     string str = "";
     str = str + "3\n" +
           name + "\n" +
-          to_string(DDLDate) + "\n" +
-          to_string(rankTime) + "\n" +
-          to_string(timeLong) + "\n" +
+          to_string(DDLDate) + " " + to_string(rankTime) + " " + to_string(timeLong) + "\n" +
           remark;
     return str;
 }
@@ -155,9 +153,7 @@ string work::store()
 void work::load(istream &fin)
 {
     getline(fin, name);
-    getLineVar(fin, DDLDate);
-    getLineVar(fin, rankTime);
-    getLineVar(fin, timeLong);
+    getLineVar(fin, DDLDate, rankTime, timeLong);
     getline(fin, remark);
 }
 

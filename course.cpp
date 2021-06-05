@@ -155,7 +155,7 @@ schedule *course::reset(schedule *sp, timeDate theData)
 string course::store()
 {
     string str = "";
-    str = str + "1\n" + name + "\n" + site + "\n" + to_string(rank) + "\n" + to_string(rankNum) + "\n" + to_string(courseWeekDay) + "\n";
+    str = str + "1\n" + name + "\n" + site + "\n" + to_string(rank) + " " + to_string(rankNum) + " " + to_string(courseWeekDay) + "\n";
     for (auto a : courseWeeks)
     {
         str += to_string(a);

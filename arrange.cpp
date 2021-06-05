@@ -124,9 +124,7 @@ string arrange::store()
     str = str + "2\n" +
           name + "\n" +
           site + "\n" +
-          to_string(DDLDate) + "\n" +
-          to_string(rankTime.startTime) + "\n" +
-          to_string(rankTime.endTime) + "\n" +
+          to_string(DDLDate) + " " + to_string(rankTime.startTime) + " " + to_string(rankTime.endTime) + "\n" +
           remark + "\n";
     for (auto a : rankDate)
     {
@@ -174,14 +172,6 @@ schedule *arrange::reset(schedule *sp, timeDate theData)
     {
         timeScale _rankTime;
         string str;
-        vector<int> _weeks, _weekdays;
-        cout << "事项在哪几周？（有多周可用逗号隔开）：";
-        getline(cin, str);
-        _weeks = toIntVec(splitString(str, ','));
-
-        cout << "事项在周几？（有多天可用逗号隔开）：";
-        getline(cin, str);
-        _weekdays = toIntVec(splitString(str, ','));
 
         cout << "事项开始时间？（时 分）：";
         int hou, min;
@@ -194,15 +184,7 @@ schedule *arrange::reset(schedule *sp, timeDate theData)
         _rankTime.endTime = _rankTime.startTime + hou * 60 + min;
 
         tmpArrangeP->rankTime = _rankTime;
-        vector<timeDate> _rankDate(0);
-        for (auto tmpDate : _weeks)
-        {
-            for (auto tmpWDays : _weekdays)
-            {
-                _rankDate.push_back(tmpDate * 7 + tmpWDays - 8 + g_startDate);
-            }
-        }
-        tmpArrangeP->rankDate = _rankDate;
+
         break;
     }
     case 2:

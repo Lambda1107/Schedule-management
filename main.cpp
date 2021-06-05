@@ -13,7 +13,7 @@ using namespace std;
 
 /*测试数据
 这周五晚上6点跟曾兆杰去吃烧烤  （arrange类）
-2 4 6 8周的周四晚上有课 新一代网络体系架构 7：00到9：00 （schedule类）
+2 4 6 8周的周四晚上有课 新一代网络体系架构 7：00到9：00 （course类）
 这周六12点前要交c++大作业 （work类）
 每周二8点前要交概率论作业 （work类）
 复习物理11章 (arrange类)
@@ -249,8 +249,8 @@ void listSchedule(int week) //显示课程
     for (int i = 0; i < 50; i++)
         cout << "●";
     cout << endl;
-    cout << setw(42) << left << "●"
-         << setw(56) << to_string(week) + " " + getDataText(g_startDate + week * 7 - 7) + " to " + getDataText(g_startDate + week * 7 - 1)
+    cout << setw(38) << left << "●"
+         << setw(60) << "第" + to_string(week) + "周 " + getDataText(g_startDate + week * 7 - 7) + " to " + getDataText(g_startDate + week * 7 - 1)
          << "●" << endl;
     cout << "●";
     for (int i = 0; i < 96; i++)
@@ -423,7 +423,7 @@ void insertPlan(schedule *tmpSchedule)
         sort(globalAllSchedule.begin(), globalAllSchedule.end(), sortSchedulesByDateFunction);
     }
 
-    if (b > 0 && find(globalNoPlanSchedule.begin(), globalNoPlanSchedule.end(), tmpSchedule) == globalNoPlanSchedule.end())
+    if (b == 0 && find(globalNoPlanSchedule.begin(), globalNoPlanSchedule.end(), tmpSchedule) == globalNoPlanSchedule.end())
     {
         globalNoPlanSchedule.push_back(tmpSchedule);
         sort(globalNoPlanSchedule.begin(), globalNoPlanSchedule.end(), sortSchedulesByDateFunction);
