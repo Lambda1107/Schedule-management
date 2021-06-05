@@ -126,6 +126,18 @@ arrange *arrange::addArrange()
         cout << "事项耗时？（时 分）：";
         cin >> hou >> min;
         _rankTime.endTime = _rankTime.startTime + hou * 60 + min;
+        
+        int year, mon, day;
+        time_t t = {};
+        tm *tmpDate = localtime(&t);
+        cout << "请输入事项截止日期（年 月 日）：";
+        cin >> year >> mon >> day;
+        tmpDate->tm_year = year - 1900;
+        tmpDate->tm_mon = mon - 1;
+        tmpDate->tm_mday = day;
+        //核心
+        _DDLDate = mktime(tmpDate) / (24 * 3600); //取得日期时间戳
+        //核心
     }
     else
     {
