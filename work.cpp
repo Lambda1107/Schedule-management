@@ -106,17 +106,13 @@ schedule *work::reset(schedule *sp, timeDate theData)
     {
         int year, mon, day, hour, min;
         cout << "请输入安排的日期：";
-        if (getLineVar(cin, year, mon, day))
-            return NULL;
-        cout << "请输入安排的时间：";
-        if (getLineVar(cin, hour, min))
+        if (getLineVar(cin, year, mon, day, hour, min))
             return NULL;
         time_t t = 0;
         tm *tmpDate = localtime(&t);
         tmpDate->tm_year = year - 1900;
         tmpDate->tm_mon = mon - 1;
         tmpDate->tm_mday = day;
-
         rankTime = (mktime(tmpDate) / (24 * 3600)) * 24 * 60 + hour * 60 + min;
 
         cout << "请输入需要多长时间（小时 分钟）：";
