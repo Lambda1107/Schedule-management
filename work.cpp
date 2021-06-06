@@ -77,12 +77,14 @@ string work::printOut(timeDate theDate)
     string str;
     if (rankTime / (24 * 60) == 0)
     {
-        str += "before " + getDataText(DDLDate) + " " + name + " (" + remark + ")";
+        str += "before " + getDataText(DDLDate) + " " + name;
     }
     else
     {
-        str += getTimeMonentText(getStartTime()) + " to " + getTimeMonentText(getStartTime() + timeLong) + " " + name + " (" + remark + ")";
+        str += getTimeMonentText(getStartTime()) + " to " + getTimeMonentText(getStartTime() + timeLong) + " " + name;
     }
+    if (remark != "" && remark != " " && remark != "无")
+        str += " (" + remark + ")";
     if (isSubmit[theDate])
         str += "已完成";
     return str;
@@ -111,7 +113,7 @@ schedule *work::reset(schedule *sp, timeDate theData)
     case 1:
     {
         int year, mon, day, hour, min;
-        cout << "请输入安排的日期：";
+        cout << "请输入安排的日期（年 月 日）：";
         if (getLineVar(cin, year, mon, day, hour, min))
             return NULL;
         time_t t = 0;

@@ -18,7 +18,9 @@ timeMonent course::getEndTime()
 string course::printOut(timeDate theDate)
 {
     string str;
-    str += getTimeMonentText(getStartTime()) + " to " + getTimeMonentText(getEndTime()) + " " + name + " at " + site;
+    str += getTimeMonentText(getStartTime()) + " to " + getTimeMonentText(getEndTime()) + " " + name;
+    if (site != "" && site != " " && site != "无")
+        str += " at " + site;
     if (isSubmit[theDate])
     {
         str += " (已完成)";

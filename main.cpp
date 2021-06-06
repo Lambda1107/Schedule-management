@@ -174,6 +174,10 @@ bool settingInformation()
 
 string getDataText(timeDate a)
 {
+    if (a == -1)
+    {
+        return "PASSED";
+    }
     time_t t = a * 3600 * 24;
     tm *tt = localtime(&t);
     char c[20];
@@ -419,7 +423,7 @@ void insertPlan(schedule *tmpSchedule)
     if (find(globalAllSchedule.begin(), globalAllSchedule.end(), tmpSchedule) == globalAllSchedule.end())
     {
         globalAllSchedule.push_back(tmpSchedule);
-        sort(globalAllSchedule.begin(), globalAllSchedule.end(), sortSchedulesByDateFunction);
+        //sort(globalAllSchedule.begin(), globalAllSchedule.end(), sortSchedulesByDateFunction);
     }
 
     if (b == 0 && find(globalNoPlanSchedule.begin(), globalNoPlanSchedule.end(), tmpSchedule) == globalNoPlanSchedule.end())
@@ -744,6 +748,43 @@ void submit(int week)
     tmpSPschedule->submit();
 }
 
+void listRecentSchedule(int week)
+{
+    system("cls");
+    cout << "●";
+    for (int i = 0; i < 48; i++)
+        cout << "●";
+    cout << "●" << endl;
+
+    cout << setw(98) << "●"
+         << "●" << endl;
+
+    if (globalAllSchedule.size() != 0)
+    {
+        sort(globalAllSchedule.begin(), globalAllSchedule.end(), sortSchedulesByDateFunction);
+        int i = 1;
+        for (auto a : globalAllSchedule)
+        {
+            cout << setw(5) << "●" << setw(93) << to_string(i) + "、" + getDataText(a->getRecentDate(getNowDate())) + "   " + a->printOut(getNowDate()) << "●" << endl;
+            i++;
+        }
+    }
+    else
+    {
+        cout << setw(40) << left << "●"
+             << "还没有计划！"
+             << setw(40) << right << "●"
+             << endl;
+    }
+    cout << setw(98) << left << "●"
+         << "●" << endl;
+    for (int i = 0; i < 50; i++)
+        cout << "●";
+    cout << endl;
+
+    system("pause");
+}
+
 int main()
 {
     int operation;
@@ -760,9 +801,9 @@ int main()
     {
         listSchedule(week);
         cout << "***************************************请选择操作***************************************************" << endl
-             << "\t1、增加计划\t2、删除计划\t3、显示上周计划\t4、显示下周计划\t5、修改计划\n\t6、周数跳转\t7、设置信息\t8、提交任务\t9、保存\t\t10、退出" << endl;
+             << "\t1、增加计划\t2、删除计划\t3、显示上周计划\t4、显示下周计划\t5、修改计划\n\t6、列出最近任务\t7、周数跳转\t8、设置信息\t9、提交任务\t10、保存\n\t\t\t\t\t11、退出" << endl;
         if (getLineVar(cin, operation))
-            operation = 10;
+            operation = 11;
         switch (operation)
         {
         case 1:
@@ -781,21 +822,24 @@ int main()
             resetPlan(week);
             break;
         case 6:
+            listRecentSchedule(week);
+            break;
+        case 7:
             cout << "跳转到（周）：";
             getLineVar(cin, week);
             break;
-        case 7:
+        case 8:
             settingInformation();
             break;
-        case 8:
+        case 9:
             submit(week);
             break;
-        case 9:
+        case 10:
             storeInformation();
             break;
         default:
             break;
         }
-    } while (operation != 10);
+    } while (operation != 11);
     storeInformation();
 }

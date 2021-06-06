@@ -46,12 +46,16 @@ string arrange::printOut(timeDate theDate)
     string str;
     if (rankDate.size() == 0)
     {
-        str += "before " + getDataText(DDLDate) + " " + name + " at " + site + " (" + remark + ")";
+        str += "before " + getDataText(DDLDate) + " " + name;
     }
     else
     {
-        str += getTimeMonentText(getStartTime()) + " to " + getTimeMonentText(rankTime.endTime) + " " + name + " at " + site + " (" + remark + ")";
+        str += getTimeMonentText(getStartTime()) + " to " + getTimeMonentText(rankTime.endTime) + " " + name;
     }
+    if (site != "" && site != " " && site != "无")
+        str += " at " + site;
+    if (remark != "" && remark != " " && remark != "无")
+        str += " (" + remark + ")";
     if (isSubmit[theDate])
         str += " (已完成)";
     return str;
@@ -176,11 +180,21 @@ schedule *arrange::reset(schedule *sp, timeDate theData)
     {
         timeScale _rankTime;
         string str;
+        vector<int> _weeks, _weekdays;
+        cout << "事项在哪几周？（有多周可用逗号隔开）：";
+        getline(cin, str);
+        _weeks = toIntVec(splitString(str, ','));
+
+        cout << "事项在周几？（有多天可用逗号隔开）：";
+        getline(cin, str);
+
+        _weekdays = toIntVec(splitString(str, ','));
 
         cout << "事项开始时间？（时 分）：";
         int hou, min;
         if (getLineVar(cin, hou, min))
             return NULL;
+
         _rankTime.startTime = hou * 60 + min;
         cout << "事项耗时？（时 分）：";
         if (getLineVar(cin, hou, min))
@@ -189,6 +203,16 @@ schedule *arrange::reset(schedule *sp, timeDate theData)
 
         tmpArrangeP->rankTime = _rankTime;
 
+        vector<timeDate> _rankDate(0);
+        for (auto tmpDate : _weeks)
+        {
+            for (auto tmpWDays : _weekdays)
+            {
+                _rankDate.push_back(tmpDate * 7 + tmpWDays - 8 + g_startDate);
+            }
+        }
+        tmpArrangeP->rankDate = _rankDate;
+        
         break;
     }
     case 2:
