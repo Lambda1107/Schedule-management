@@ -43,14 +43,18 @@ timeMonent arrange::getStartTime()
 
 string arrange::printOut(timeDate theDate)
 {
+    string str;
     if (rankDate.size() == 0)
     {
-        return "before " + getDataText(DDLDate) + " " + name + " at " + site + " (" + remark + ")";
+        str += "before " + getDataText(DDLDate) + " " + name + " at " + site + " (" + remark + ")";
     }
     else
     {
-        return getTimeMonentText(getStartTime()) + " to " + getTimeMonentText(rankTime.endTime) + " " + name + " at " + site + " (" + remark + ")";
+        str += getTimeMonentText(getStartTime()) + " to " + getTimeMonentText(rankTime.endTime) + " " + name + " at " + site + " (" + remark + ")";
     }
+    if (isSubmit[theDate])
+        str += " (ÒÑÍê³É)";
+    return str;
 }
 
 arrange *arrange::addArrange()

@@ -1,7 +1,9 @@
 #include <string>
 #include <vector>
 #include <sstream>
+#include <map>
 #include <ctime>
+
 using namespace std;
 #ifndef SCHEDULE_H
 #define SCHEDULE_H
@@ -18,6 +20,9 @@ struct timeScale
 
 class schedule
 {
+protected:
+    map<timeDate,bool> isSubmit;
+
 public:
     schedule() {}
     virtual ~schedule() {}
@@ -29,6 +34,7 @@ public:
     virtual schedule *reset(schedule *sp = NULL, timeDate theData = 0) = 0;
     virtual string store() = 0;
     virtual void load(istream &fin) = 0;
+    virtual void submit(timeDate theDate = -1);
 };
 
 struct plan
@@ -67,7 +73,7 @@ bool strToVar(string str, T &var, Ts &...Vars)
 }
 
 template <typename... Ts>
-bool getLineVar(istream &is, Ts & ...Vars)
+bool getLineVar(istream &is, Ts &...Vars)
 {
     string str;
     getline(is, str);

@@ -12,10 +12,9 @@
 using namespace std;
 
 /*测试数据
-这周五晚上6点跟曾兆杰去吃烧烤  （arrange类）
+这周五晚上7点组会  （arrange类）
 2 4 6 8周的周四晚上有课 新一代网络体系架构 7：00到9：00 （course类）
 这周六12点前要交c++大作业 （work类）
-每周二8点前要交概率论作业 （work类）
 复习物理11章 (arrange类)
 工数已经复习到7.3 总共需要复习到第10章 （progress类）
 每天需要写10个高中题（work类）
@@ -700,6 +699,51 @@ void resetPlan(int week)
     system("pause");
 }
 
+void submit(int week)
+{
+    int weekday, planRank;
+    cout << "您想提交周几的计划（1-7）：";
+    if (getLineVar(cin, weekday))
+        return;
+
+    timeDate theDate = g_startDate + week * 7 + weekday - 8;
+    auto it_theDate = findDate(theDate);
+
+    if (it_theDate->Date == theDate)
+        cout << "您想提交第几个计划（1-" << it_theDate->scheduleList.size() << "）：";
+    else
+    {
+        cout << "抱歉，所选的日期没有计划，请先添加吧！" << endl;
+        system("pause");
+        return;
+    }
+
+    if (getLineVar(cin, planRank))
+        return;
+    auto it_schedule = it_theDate->scheduleList.begin() + planRank - 1;
+    auto tmpSPschedule = *(it_schedule);             //要修改的schedule的指针
+    auto tmpRankDate = tmpSPschedule->getRankDate(); //要修改的schedule的周数列表
+
+    if (tmpRankDate.size() > 1) //这是一个多次重复计划
+    {
+        //判断合法输入
+        string str;
+        do
+        {
+            cout << "这是一个多次重复计划，是否提交所有这些计划？（yes or no）:";
+            if (getLineVar(cin, str))
+                return;
+        } while (str != "yes" && str != "no");
+        //判断输入yes or no
+        if (str == "no") //只改一个
+        {
+            tmpSPschedule->submit(theDate);
+            return;
+        }
+    }
+    tmpSPschedule->submit();
+}
+
 int main()
 {
     int operation;
@@ -716,9 +760,9 @@ int main()
     {
         listSchedule(week);
         cout << "***************************************请选择操作***************************************************" << endl
-             << "\t\t1、增加计划\t2、删除计划\t3、显示上周计划\n\t\t4、显示下周计划\t5、修改计划\t6、周数跳转\n\t\t7、设置信息\t8、保存\t\t9、退出" << endl;
+             << "\t1、增加计划\t2、删除计划\t3、显示上周计划\t4、显示下周计划\t5、修改计划\n\t6、周数跳转\t7、设置信息\t8、提交任务\t9、保存\t\t10、退出" << endl;
         if (getLineVar(cin, operation))
-            operation = 9;
+            operation = 10;
         switch (operation)
         {
         case 1:
@@ -744,11 +788,14 @@ int main()
             settingInformation();
             break;
         case 8:
+            submit(week);
+            break;
+        case 9:
             storeInformation();
             break;
         default:
             break;
         }
-    } while (operation != 9);
+    } while (operation != 10);
     storeInformation();
 }

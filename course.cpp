@@ -17,7 +17,13 @@ timeMonent course::getEndTime()
 
 string course::printOut(timeDate theDate)
 {
-    return getTimeMonentText(getStartTime()) + " to " + getTimeMonentText(getEndTime()) + " " + name + " at " + site;
+    string str;
+    str += getTimeMonentText(getStartTime()) + " to " + getTimeMonentText(getEndTime()) + " " + name + " at " + site;
+    if (isSubmit[theDate])
+    {
+        str += " (ÒÑÍê³É)";
+    }
+    return str;
 }
 
 course::course()

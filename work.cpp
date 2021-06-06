@@ -6,6 +6,7 @@
 using namespace std;
 
 work::work() {}
+
 work::work(string _name, string _remark, timeDate _DDLDate, timeDateMonent _rankTime, timeMonent _timeLong)
 {
     name = _name;
@@ -14,6 +15,7 @@ work::work(string _name, string _remark, timeDate _DDLDate, timeDateMonent _rank
     rankTime = _rankTime;
     timeLong = _timeLong;
 }
+
 work::~work() {}
 
 schedule *work::addWork()
@@ -72,14 +74,18 @@ timeMonent work::getStartTime()
 
 string work::printOut(timeDate theDate)
 {
+    string str;
     if (rankTime / (24 * 60) == 0)
     {
-        return "before " + getDataText(DDLDate) + " " + name + " at " + " (" + remark + ")";
+        str += "before " + getDataText(DDLDate) + " " + name + " (" + remark + ")";
     }
     else
     {
-        return getTimeMonentText(getStartTime()) + " to " + getTimeMonentText(getStartTime() + timeLong) + " " + name + " (" + remark + ")";
+        str += getTimeMonentText(getStartTime()) + " to " + getTimeMonentText(getStartTime() + timeLong) + " " + name + " (" + remark + ")";
     }
+    if (isSubmit[theDate])
+        str += "ÒÑÍê³É";
+    return str;
 }
 
 timeDate work::getRecentDate(timeDate theDate)
