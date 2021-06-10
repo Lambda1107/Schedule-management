@@ -130,10 +130,19 @@ schedule *work::reset(schedule *sp, timeDate theData)
         break;
     }
     case 2:
-        cout << "请输入DDL时间：";
-        if (getLineVar(cin, DDLDate))
+    {
+        cout << "请输入DDL时间（年 月 日）：";
+        int year, mon, day;
+        if (getLineVar(cin, year, mon, day))
             return NULL;
+        time_t t = 0;
+        tm *tmpDate = localtime(&t);
+        tmpDate->tm_year = year - 1900;
+        tmpDate->tm_mon = mon - 1;
+        tmpDate->tm_mday = day;
+        DDLDate = mktime(tmpDate) / (24 * 3600);
         break;
+    }
     case 3:
         cout << "请输入新作业名：";
         getline(cin, name);
