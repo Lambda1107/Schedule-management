@@ -33,7 +33,7 @@ timeDate arrange::getRecentDate(timeDate theDate)
     else
         return *it_rankDate;
 
-    //·µ»Ø×î½üµÄ°²ÅÅÊ±¼ä£¬Èç¹ûÃ»ÓĞ¾Í·µ»ØDDLÊ±¼ä£¬Èç¹ûDDLÊ±¼äÒÑ¾­¹ıÁË¾Í·µ»Ø-1
+    //è¿”å›æœ€è¿‘çš„å®‰æ’æ—¶é—´ï¼Œå¦‚æœæ²¡æœ‰å°±è¿”å›DDLæ—¶é—´ï¼Œå¦‚æœDDLæ—¶é—´å·²ç»è¿‡äº†å°±è¿”å›-1
 }
 
 timeMonent arrange::getStartTime()
@@ -52,12 +52,12 @@ string arrange::printOut(timeDate theDate)
     {
         str += getTimeMonentText(getStartTime()) + " to " + getTimeMonentText(rankTime.endTime) + " " + name;
     }
-    if (site != "" && site != " " && site != "ÎŞ")
+    if (site != "" && site != " " && site != "æ— ")
         str += " at " + site;
-    if (remark != "" && remark != " " && remark != "ÎŞ")
+    if (remark != "" && remark != " " && remark != "æ— ")
         str += " (" + remark + ")";
     if (isSubmit[theDate])
-        str += " (ÒÑÍê³É)";
+        str += " (å·²å®Œæˆ)";
     return str;
 }
 
@@ -71,27 +71,27 @@ arrange *arrange::addArrange()
 
     do
     {
-        cout << "ÊÇ·ñ°²ÅÅÊ±¼ä£¿£¨yes or no£©:";
+        cout << "æ˜¯å¦å®‰æ’æ—¶é—´ï¼Ÿï¼ˆyes or noï¼‰:";
         if (getLineVar(cin, str))
             return NULL;
     } while (str != "yes" && str != "no");
 
     if (str == "yes")
     {
-        cout << "ÊÂÏîÔÚÄÄ¼¸ÖÜ£¿£¨ÓĞ¶àÖÜ¿ÉÓÃ¶ººÅ¸ô¿ª£©£º";
+        cout << "äº‹é¡¹åœ¨å“ªå‡ å‘¨ï¼Ÿï¼ˆæœ‰å¤šå‘¨å¯ç”¨é€—å·éš”å¼€ï¼‰ï¼š";
         getline(cin, str);
         _weeks = toIntVec(splitString(str, ','));
 
-        cout << "ÊÂÏîÔÚÖÜ¼¸£¿£¨ÓĞ¶àÌì¿ÉÓÃ¶ººÅ¸ô¿ª£©£º";
+        cout << "äº‹é¡¹åœ¨å‘¨å‡ ï¼Ÿï¼ˆæœ‰å¤šå¤©å¯ç”¨é€—å·éš”å¼€ï¼‰ï¼š";
         getline(cin, str);
         _weekdays = toIntVec(splitString(str, ','));
 
-        cout << "ÊÂÏî¿ªÊ¼Ê±¼ä£¿£¨Ê± ·Ö£©£º";
+        cout << "äº‹é¡¹å¼€å§‹æ—¶é—´ï¼Ÿï¼ˆæ—¶ åˆ†ï¼‰ï¼š";
         int hou, min;
         if (getLineVar(cin, hou, min))
             return NULL;
         _rankTime.startTime = hou * 60 + min;
-        cout << "ÊÂÏîºÄÊ±£¿£¨Ê± ·Ö£©£º";
+        cout << "äº‹é¡¹è€—æ—¶ï¼Ÿï¼ˆæ—¶ åˆ†ï¼‰ï¼š";
         if (getLineVar(cin, hou, min))
             return NULL;
         _rankTime.endTime = _rankTime.startTime + hou * 60 + min;
@@ -99,21 +99,21 @@ arrange *arrange::addArrange()
     int year, mon, day;
     time_t t = 0;
     tm *tmpDate = localtime(&t);
-    cout << "ÇëÊäÈëÊÂÏî½ØÖ¹ÈÕÆÚ£¨Äê ÔÂ ÈÕ£©£º";
+    cout << "è¯·è¾“å…¥äº‹é¡¹æˆªæ­¢æ—¥æœŸï¼ˆå¹´ æœˆ æ—¥ï¼‰ï¼š";
     if (getLineVar(cin, year, mon, day))
         return NULL;
     tmpDate->tm_year = year - 1900;
     tmpDate->tm_mon = mon - 1;
     tmpDate->tm_mday = day;
-    //ºËĞÄ
-    _DDLDate = mktime(tmpDate) / (24 * 3600); //È¡µÃÈÕÆÚÊ±¼ä´Á
-    //ºËĞÄ
+    //æ ¸å¿ƒ
+    _DDLDate = mktime(tmpDate) / (24 * 3600); //å–å¾—æ—¥æœŸæ—¶é—´æˆ³
+    //æ ¸å¿ƒ
 
-    cout << "ÇëÊäÈëÊÂ¼şÃû³Æ£º";
+    cout << "è¯·è¾“å…¥äº‹ä»¶åç§°ï¼š";
     getline(cin, _name);
-    cout << "ÇëÊäÈëÊÂ¼şµØµã£º";
+    cout << "è¯·è¾“å…¥äº‹ä»¶åœ°ç‚¹ï¼š";
     getline(cin, _site);
-    cout << "ÇëÊäÈë±¸×¢£º";
+    cout << "è¯·è¾“å…¥å¤‡æ³¨ï¼š";
     getline(cin, _remark);
     vector<timeDate> _rankDate(0);
     for (auto tmpDate : _weeks)
@@ -168,8 +168,8 @@ schedule *arrange::reset(schedule *sp, timeDate theData)
         delete tmpArrangeP;
         tmpArrangeP = this;
     }
-    cout << "ÄúÏëĞŞ¸ÄÊ²Ã´£¿" << endl
-         << "1¡¢°²ÅÅÊ±¼ä 2¡¢DDLÊ±¼ä 3¡¢ÊÂÏîÃû  4¡¢ÊÂÏîµØµã 5¡¢±¸×¢" << endl;
+    cout << "æ‚¨æƒ³ä¿®æ”¹ä»€ä¹ˆï¼Ÿ" << endl
+         << "1ã€å®‰æ’æ—¶é—´ 2ã€DDLæ—¶é—´ 3ã€äº‹é¡¹å  4ã€äº‹é¡¹åœ°ç‚¹ 5ã€å¤‡æ³¨" << endl;
     int option;
     if (getLineVar(cin, option))
         return NULL;
@@ -181,22 +181,22 @@ schedule *arrange::reset(schedule *sp, timeDate theData)
         timeScale _rankTime;
         string str;
         vector<int> _weeks, _weekdays;
-        cout << "ÊÂÏîÔÚÄÄ¼¸ÖÜ£¿£¨ÓĞ¶àÖÜ¿ÉÓÃ¶ººÅ¸ô¿ª£©£º";
+        cout << "äº‹é¡¹åœ¨å“ªå‡ å‘¨ï¼Ÿï¼ˆæœ‰å¤šå‘¨å¯ç”¨é€—å·éš”å¼€ï¼‰ï¼š";
         getline(cin, str);
         _weeks = toIntVec(splitString(str, ','));
 
-        cout << "ÊÂÏîÔÚÖÜ¼¸£¿£¨ÓĞ¶àÌì¿ÉÓÃ¶ººÅ¸ô¿ª£©£º";
+        cout << "äº‹é¡¹åœ¨å‘¨å‡ ï¼Ÿï¼ˆæœ‰å¤šå¤©å¯ç”¨é€—å·éš”å¼€ï¼‰ï¼š";
         getline(cin, str);
 
         _weekdays = toIntVec(splitString(str, ','));
 
-        cout << "ÊÂÏî¿ªÊ¼Ê±¼ä£¿£¨Ê± ·Ö£©£º";
+        cout << "äº‹é¡¹å¼€å§‹æ—¶é—´ï¼Ÿï¼ˆæ—¶ åˆ†ï¼‰ï¼š";
         int hou, min;
         if (getLineVar(cin, hou, min))
             return NULL;
 
         _rankTime.startTime = hou * 60 + min;
-        cout << "ÊÂÏîºÄÊ±£¿£¨Ê± ·Ö£©£º";
+        cout << "äº‹é¡¹è€—æ—¶ï¼Ÿï¼ˆæ—¶ åˆ†ï¼‰ï¼š";
         if (getLineVar(cin, hou, min))
             return NULL;
         _rankTime.endTime = _rankTime.startTime + hou * 60 + min;
@@ -216,20 +216,20 @@ schedule *arrange::reset(schedule *sp, timeDate theData)
         break;
     }
     case 2:
-        cout << "ÇëÊäÈëDDLÊ±¼ä£º";
+        cout << "è¯·è¾“å…¥DDLæ—¶é—´ï¼š";
         if (getLineVar(cin, tmpArrangeP->DDLDate))
             return NULL;
         break;
     case 3:
-        cout << "ÇëÊäÈëĞÂÊÂÏîÃû£º";
+        cout << "è¯·è¾“å…¥æ–°äº‹é¡¹åï¼š";
         getline(cin, tmpArrangeP->name);
         break;
     case 4:
-        cout << "ÇëÊäÈëĞÂÊÂÏîµØµã£º";
+        cout << "è¯·è¾“å…¥æ–°äº‹é¡¹åœ°ç‚¹ï¼š";
         getline(cin, tmpArrangeP->site);
         break;
     case 5:
-        cout << "ÇëÊäÈëĞÂ±¸×¢£º";
+        cout << "è¯·è¾“å…¥æ–°å¤‡æ³¨ï¼š";
         getline(cin, tmpArrangeP->remark);
         break;
     default:

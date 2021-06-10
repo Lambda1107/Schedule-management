@@ -11,23 +11,23 @@
 #include "arrange.h"
 using namespace std;
 
-/*²âÊÔÊı¾İ
-ÕâÖÜÎåÍíÉÏ7µã×é»á  £¨arrangeÀà£©
-2 4 6 8ÖÜµÄÖÜËÄÍíÉÏÓĞ¿Î ĞÂÒ»´úÍøÂçÌåÏµ¼Ü¹¹ 7£º00µ½9£º00 £¨courseÀà£©
-ÕâÖÜÁù12µãÇ°Òª½»c++´ó×÷Òµ £¨workÀà£©
-¸´Ï°ÎïÀí11ÕÂ (arrangeÀà)
-¹¤ÊıÒÑ¾­¸´Ï°µ½7.3 ×Ü¹²ĞèÒª¸´Ï°µ½µÚ10ÕÂ £¨progressÀà£©
-Ã¿ÌìĞèÒªĞ´10¸ö¸ßÖĞÌâ£¨workÀà£©
-ÀÖÅÜÒÑ¾­ÅÜÁË29´Î£¬×Ü¹²ĞèÒªÅÜ45´Î£¬6.25ºÅ½ØÖ¹£¨progressÀà£©
+/*æµ‹è¯•æ•°æ®
+è¿™å‘¨äº”æ™šä¸Š7ç‚¹ç»„ä¼š  ï¼ˆarrangeç±»ï¼‰
+2 4 6 8å‘¨çš„å‘¨å››æ™šä¸Šæœ‰è¯¾ æ–°ä¸€ä»£ç½‘ç»œä½“ç³»æ¶æ„ 7ï¼š00åˆ°9ï¼š00 ï¼ˆcourseç±»ï¼‰
+è¿™å‘¨å…­12ç‚¹å‰è¦äº¤c++å¤§ä½œä¸š ï¼ˆworkç±»ï¼‰
+å¤ä¹ ç‰©ç†11ç«  (arrangeç±»)
+å·¥æ•°å·²ç»å¤ä¹ åˆ°7.3 æ€»å…±éœ€è¦å¤ä¹ åˆ°ç¬¬10ç«  ï¼ˆprogressç±»ï¼‰
+æ¯å¤©éœ€è¦å†™10ä¸ªé«˜ä¸­é¢˜ï¼ˆworkç±»ï¼‰
+ä¹è·‘å·²ç»è·‘äº†29æ¬¡ï¼Œæ€»å…±éœ€è¦è·‘45æ¬¡ï¼Œ6.25å·æˆªæ­¢ï¼ˆprogressç±»ï¼‰
 */
 
-//È«¾Ö±äÁ¿
-vector<plan> globalPlan(0);                 //Ã¿Ìì¼Æ»®µÄ¼¯ºÏ
-vector<schedule *> globalAllSchedule(0);    //ËùÓĞ¼Æ»®µÄ¼¯ºÏ
-vector<schedule *> globalNoPlanSchedule(0); //ËùÓĞÃ»°²ÅÅÊ±¼ä¼Æ»®µÄ¼¯ºÏ
-int g_scheduleLong = 0;                     //Ã¿½Ú¿ÎÊ±³¤ µ¥Î»·ÖÖÓ
-timeDate g_startDate = 0;                   //¼Æ»®¿ªÊ¼ÈÕÆÚ
-vector<timeScale> g_timeTab(0);             //Ã¿ÌìÊ±¼ä±í
+//å…¨å±€å˜é‡
+vector<plan> globalPlan(0);                 //æ¯å¤©è®¡åˆ’çš„é›†åˆ
+vector<schedule *> globalAllSchedule(0);    //æ‰€æœ‰è®¡åˆ’çš„é›†åˆ
+vector<schedule *> globalNoPlanSchedule(0); //æ‰€æœ‰æ²¡å®‰æ’æ—¶é—´è®¡åˆ’çš„é›†åˆ
+int g_scheduleLong = 0;                     //æ¯èŠ‚è¯¾æ—¶é•¿ å•ä½åˆ†é’Ÿ
+timeDate g_startDate = 0;                   //è®¡åˆ’å¼€å§‹æ—¥æœŸ
+vector<timeScale> g_timeTab(0);             //æ¯å¤©æ—¶é—´è¡¨
 bool strToVar(string str) { return false; }
 
 string getTimeMonentText(timeMonent tim, char syb)
@@ -40,20 +40,20 @@ string getTimeMonentText(timeMonent tim, char syb)
     return str;
 }
 
-timeDate getNowDate() //È¡µÃµ±Ç°ÈÕÆÚ
+timeDate getNowDate() //å–å¾—å½“å‰æ—¥æœŸ
 {
     time_t t;
     t = time(0);
     return t / (24 * 3600);
 }
 
-int getWeek(timeDate td) //È¡µÃÖ¸¶¨ÈÕÆÚÏà¶ÔÓÚ¿ªÊ¼ÈÕÆÚµÄÖÜÊı
+int getWeek(timeDate td) //å–å¾—æŒ‡å®šæ—¥æœŸç›¸å¯¹äºå¼€å§‹æ—¥æœŸçš„å‘¨æ•°
 {
     td -= g_startDate;
     return (td / 7) + 1;
 }
 
-int getWday(timeDate td) //µÃµ½ĞÇÆÚ¼¸
+int getWday(timeDate td) //å¾—åˆ°æ˜ŸæœŸå‡ 
 {
     time_t t = td * 24 * 3600;
     tm *tt = localtime(&t);
@@ -62,11 +62,11 @@ int getWday(timeDate td) //µÃµ½ĞÇÆÚ¼¸
 
 vector<string> splitString(string str, char syb)
 {
-    //·Ö¸î×Ö·û´®
+    //åˆ†å‰²å­—ç¬¦ä¸²
     size_t pos;
     vector<string> result;
     if (str[str.length() - 1] != syb)
-        str += syb; //À©Õ¹×Ö·û´®ÒÔ·½±ã²Ù×÷
+        str += syb; //æ‰©å±•å­—ç¬¦ä¸²ä»¥æ–¹ä¾¿æ“ä½œ
     int size = str.size();
     for (int i = 0; i < size; i++)
     {
@@ -78,11 +78,11 @@ vector<string> splitString(string str, char syb)
             i = pos;
         }
     }
-    //µÃµ½×Ó×Ö·û´®vector
+    //å¾—åˆ°å­å­—ç¬¦ä¸²vector
     return result;
 }
 
-string getWdayText(int wday) //Êı×Ö×ªÎÄ×Ö
+string getWdayText(int wday) //æ•°å­—è½¬æ–‡å­—
 {
     switch (wday)
     {
@@ -147,7 +147,7 @@ bool settingInformation()
     tm *tmpDate = localtime(&t);
     do
     {
-        cout << "ÇëÊäÈëÄú±¾Ñ§ÆÚ¿ªÊ¼ÉÏ¿ÎµÄµÚÒ»ÖÜĞÇÆÚÒ»µÄÈÕÆÚ£¨Äê ÔÂ ÈÕ£©£º";
+        cout << "è¯·è¾“å…¥æ‚¨æœ¬å­¦æœŸå¼€å§‹ä¸Šè¯¾çš„ç¬¬ä¸€å‘¨æ˜ŸæœŸä¸€çš„æ—¥æœŸï¼ˆå¹´ æœˆ æ—¥ï¼‰ï¼š";
         if (getLineVar(cin, year, mon, day))
             return 0;
     } while (year < 1900 || mon < 1 || mon > 12 || day < 1 || day > 31);
@@ -155,20 +155,20 @@ bool settingInformation()
     tmpDate->tm_year = year - 1900;
     tmpDate->tm_mon = mon - 1;
     tmpDate->tm_mday = day;
-    startDate = mktime(tmpDate) / (24 * 3600); //È¡µÃÈÕÆÚÊ±¼ä´Á
+    startDate = mktime(tmpDate) / (24 * 3600); //å–å¾—æ—¥æœŸæ—¶é—´æˆ³
     g_startDate = startDate;
     do
     {
-        cout << "ÇëÊäÈëÄúÃ¿½Ú¿ÎµÄÊ±³¤(·ÖÖÓ)£º";
+        cout << "è¯·è¾“å…¥æ‚¨æ¯èŠ‚è¯¾çš„æ—¶é•¿(åˆ†é’Ÿ)ï¼š";
         if (getLineVar(cin, scheduleLong))
             return 0;
     } while (scheduleLong < 1);
 
     g_scheduleLong = scheduleLong;
-    cout << "ÇëÊäÈëÄúÃ¿½Ú¿ÎµÄÉÏ¿ÎÊ±¼ä(¿ÎÖ®¼äÓÃ¶ººÅ¸ô¿ª)£º";
+    cout << "è¯·è¾“å…¥æ‚¨æ¯èŠ‚è¯¾çš„ä¸Šè¯¾æ—¶é—´(è¯¾ä¹‹é—´ç”¨é€—å·éš”å¼€)ï¼š";
     getline(cin, tmpInput);
     g_timeTab = getTimeMapFromText(tmpInput);
-    cout << "*************ÉèÖÃÍê³É£¡*****************" << endl;
+    cout << "*************è®¾ç½®å®Œæˆï¼*****************" << endl;
     return 1;
 }
 
@@ -245,20 +245,20 @@ void storeInformation()
     fou.close();
 }
 
-void listSchedule(int week) //ÏÔÊ¾¿Î³Ì
+void listSchedule(int week) //æ˜¾ç¤ºè¯¾ç¨‹
 {
     system("cls");
 
     for (int i = 0; i < 50; i++)
-        cout << "¡ñ";
+        cout << "â—";
     cout << endl;
-    cout << setw(38) << left << "¡ñ"
-         << setw(60) << "µÚ" + to_string(week) + "ÖÜ " + getDataText(g_startDate + week * 7 - 7) + " to " + getDataText(g_startDate + week * 7 - 1)
-         << "¡ñ" << endl;
-    cout << "¡ñ";
+    cout << setw(38) << left << "â—"
+         << setw(60) << "ç¬¬" + to_string(week) + "å‘¨ " + getDataText(g_startDate + week * 7 - 7) + " to " + getDataText(g_startDate + week * 7 - 1)
+         << "â—" << endl;
+    cout << "â—";
     for (int i = 0; i < 96; i++)
         cout << "=";
-    cout << "¡ñ" << endl;
+    cout << "â—" << endl;
 
     bool b = 0;
     for (auto &a : globalPlan)
@@ -266,15 +266,15 @@ void listSchedule(int week) //ÏÔÊ¾¿Î³Ì
         if (getWeek(a.Date) == week)
         {
             b = 1;
-            cout << setw(5) << "¡ñ" << setw(5) << getDataText(a.Date) << " " << setw(86) << getWdayText(getWday(a.Date)) + ':' << "¡ñ" << endl;
+            cout << setw(5) << "â—" << setw(5) << getDataText(a.Date) << " " << setw(86) << getWdayText(getWday(a.Date)) + ':' << "â—" << endl;
             int i = 1;
             for (auto &tmpSchedule : a.scheduleList)
             {
-                cout << setw(5) << "¡ñ" << setw(93) << to_string(i) + "¡¢" + tmpSchedule->printOut(a.Date) << "¡ñ" << endl;
+                cout << setw(5) << "â—" << setw(93) << to_string(i) + "ã€" + tmpSchedule->printOut(a.Date) << "â—" << endl;
                 i++;
             }
-            cout << setw(98) << "¡ñ"
-                 << "¡ñ" << endl;
+            cout << setw(98) << "â—"
+                 << "â—" << endl;
         }
         else if (b)
         {
@@ -283,44 +283,44 @@ void listSchedule(int week) //ÏÔÊ¾¿Î³Ì
     }
     if (!b)
     {
-        cout << setw(98) << "¡ñ"
-             << "¡ñ" << endl;
-        cout << setw(42) << left << "¡ñ"
-             << "ÕâÖÜ»¹Ã»ÓĞ¼Æ»®£¡"
-             << setw(42) << right << "¡ñ"
+        cout << setw(98) << "â—"
+             << "â—" << endl;
+        cout << setw(42) << left << "â—"
+             << "è¿™å‘¨è¿˜æ²¡æœ‰è®¡åˆ’ï¼"
+             << setw(42) << right << "â—"
              << endl;
-        cout << setw(98) << left << "¡ñ"
-             << "¡ñ" << endl;
+        cout << setw(98) << left << "â—"
+             << "â—" << endl;
     }
 
-    cout << "¡ñ";
+    cout << "â—";
     for (int i = 0; i < 96; i++)
         cout << "=";
-    cout << "¡ñ" << endl;
+    cout << "â—" << endl;
 
-    cout << setw(98) << "¡ñ"
-         << "¡ñ" << endl;
+    cout << setw(98) << "â—"
+         << "â—" << endl;
 
     if (globalNoPlanSchedule.size() != 0)
     {
         int i = 1;
         for (auto a : globalNoPlanSchedule)
         {
-            cout << setw(5) << "¡ñ" << setw(93) << to_string(i) + "¡¢" + a->printOut() << "¡ñ" << endl;
+            cout << setw(5) << "â—" << setw(93) << to_string(i) + "ã€" + a->printOut() << "â—" << endl;
             i++;
         }
     }
     else
     {
-        cout << setw(40) << left << "¡ñ"
-             << "»¹Ã»ÓĞÎŞ°²ÅÅµÄ¼Æ»®£¡"
-             << setw(40) << right << "¡ñ"
+        cout << setw(40) << left << "â—"
+             << "è¿˜æ²¡æœ‰æ— å®‰æ’çš„è®¡åˆ’ï¼"
+             << setw(40) << right << "â—"
              << endl;
     }
-    cout << setw(98) << left << "¡ñ"
-         << "¡ñ" << endl;
+    cout << setw(98) << left << "â—"
+         << "â—" << endl;
     for (int i = 0; i < 50; i++)
-        cout << "¡ñ";
+        cout << "â—";
     cout << endl;
 }
 
@@ -407,7 +407,7 @@ void insertPlan(schedule *tmpSchedule)
     {
         b++;
         auto it_theDate = findDate(theDate);
-        if (it_theDate != globalPlan.end() && it_theDate->Date == theDate) //ÅĞ¶ÏÊÇ·ñÒÑ¾­ÓĞÕâÌìµÄ¼Æ»®ÁË
+        if (it_theDate != globalPlan.end() && it_theDate->Date == theDate) //åˆ¤æ–­æ˜¯å¦å·²ç»æœ‰è¿™å¤©çš„è®¡åˆ’äº†
         {
             it_theDate->scheduleList.push_back(tmpSchedule);
             sort(it_theDate->scheduleList.begin(), it_theDate->scheduleList.end(), sortSchedulesFunction);
@@ -448,11 +448,11 @@ void deleteSchedule(schedule *tmpSchedule)
     removeNoPlanSchedule(tmpSchedule);
 }
 
-void addPlan() //Ìí¼Ó¼Æ»®
+void addPlan() //æ·»åŠ è®¡åˆ’
 {
     int choice;
-    cout << "ÄúÏëÌí¼ÓÄÄÖÖ¼Æ»®£¿" << endl
-         << "1¡¢¿Î³Ì  2¡¢ÊÂÏî 3¡¢×÷Òµ" << endl;
+    cout << "æ‚¨æƒ³æ·»åŠ å“ªç§è®¡åˆ’ï¼Ÿ" << endl
+         << "1ã€è¯¾ç¨‹  2ã€äº‹é¡¹ 3ã€ä½œä¸š" << endl;
     if (getLineVar(cin, choice))
         return;
     schedule *tmpSchedule = NULL;
@@ -475,8 +475,8 @@ void addPlan() //Ìí¼Ó¼Æ»®
 
 void removePlan(int week)
 {
-    //ÅĞ¶ÏÉ¾³ıÀàĞÍ
-    cout << "ÄúÏëÉ¾³ıÒÑ°²ÅÅµÄ¼Æ»®Î´»¹ÊÇÊ±¼äµÄ¼Æ»®£¿£¨0¡¢ÒÑ°²ÅÅ 1¡¢Î´°²ÅÅ£©£º";
+    //åˆ¤æ–­åˆ é™¤ç±»å‹
+    cout << "æ‚¨æƒ³åˆ é™¤å·²å®‰æ’çš„è®¡åˆ’æœªè¿˜æ˜¯æ—¶é—´çš„è®¡åˆ’ï¼Ÿï¼ˆ0ã€å·²å®‰æ’ 1ã€æœªå®‰æ’ï¼‰ï¼š";
     int option;
     if (getLineVar(cin, option))
         return;
@@ -484,17 +484,17 @@ void removePlan(int week)
     {
         if (globalNoPlanSchedule.size() == 0)
         {
-            cout << "±§Ç¸£¬Ã»ÓĞÎ´°²ÅÅµÄ¼Æ»®£¬ÇëÏÈÌí¼Ó°É£¡" << endl;
+            cout << "æŠ±æ­‰ï¼Œæ²¡æœ‰æœªå®‰æ’çš„è®¡åˆ’ï¼Œè¯·å…ˆæ·»åŠ å§ï¼" << endl;
             system("pause");
             return;
         }
         int choice;
-        cout << "ÄúÏëÉ¾³ıµÚ¼¸¸ö¼Æ»®£¿£¨1-" << globalNoPlanSchedule.size() << "£©£º";
+        cout << "æ‚¨æƒ³åˆ é™¤ç¬¬å‡ ä¸ªè®¡åˆ’ï¼Ÿï¼ˆ1-" << globalNoPlanSchedule.size() << "ï¼‰ï¼š";
         if (getLineVar(cin, choice))
             return;
         while (choice > globalNoPlanSchedule.size() || choice < 1)
         {
-            cout << "±§Ç¸£¬ÄúµÄÊäÈëÓĞÎó£¬Çë¼ì²éºóÖØĞÂÊäÈë";
+            cout << "æŠ±æ­‰ï¼Œæ‚¨çš„è¾“å…¥æœ‰è¯¯ï¼Œè¯·æ£€æŸ¥åé‡æ–°è¾“å…¥";
             if (getLineVar(cin, choice))
                 return;
         }
@@ -504,7 +504,7 @@ void removePlan(int week)
     else
     {
         int weekday, planRank;
-        cout << "ÄúÏëÉ¾³ıÖÜ¼¸µÄ¼Æ»®£¨1-7£©£º";
+        cout << "æ‚¨æƒ³åˆ é™¤å‘¨å‡ çš„è®¡åˆ’ï¼ˆ1-7ï¼‰ï¼š";
         if (getLineVar(cin, weekday))
             return;
 
@@ -512,73 +512,73 @@ void removePlan(int week)
         auto it_theDate = findDate(theDate);
 
         if (it_theDate->Date == theDate)
-            cout << "ÄúÏëÉ¾³ıµÚ¼¸¸ö¼Æ»®£¨1-" << it_theDate->scheduleList.size() << "£©£º";
+            cout << "æ‚¨æƒ³åˆ é™¤ç¬¬å‡ ä¸ªè®¡åˆ’ï¼ˆ1-" << it_theDate->scheduleList.size() << "ï¼‰ï¼š";
         else
         {
-            cout << "±§Ç¸£¬ËùÑ¡µÄÈÕÆÚÃ»ÓĞ¼Æ»®£¬ÇëÏÈÌí¼Ó°É£¡" << endl;
+            cout << "æŠ±æ­‰ï¼Œæ‰€é€‰çš„æ—¥æœŸæ²¡æœ‰è®¡åˆ’ï¼Œè¯·å…ˆæ·»åŠ å§ï¼" << endl;
             system("pause");
             return;
         }
 
         if (getLineVar(cin, planRank))
             return;
-        auto tmpDPschedule = *(it_theDate->scheduleList.begin() + planRank - 1); //ÒªÉ¾³ıµÄscheduleµÄÖ¸Õë
-        vector<timeDate> tmpRankDate = tmpDPschedule->getRankDate();             //ÒªÉ¾³ıµÄscheduleµÄÖÜÊıÁĞ±í
-        if (tmpRankDate.size() > 1)                                              //ÕâÊÇÒ»¸ö¶à´ÎÖØ¸´¼Æ»®
+        auto tmpDPschedule = *(it_theDate->scheduleList.begin() + planRank - 1); //è¦åˆ é™¤çš„scheduleçš„æŒ‡é’ˆ
+        vector<timeDate> tmpRankDate = tmpDPschedule->getRankDate();             //è¦åˆ é™¤çš„scheduleçš„å‘¨æ•°åˆ—è¡¨
+        if (tmpRankDate.size() > 1)                                              //è¿™æ˜¯ä¸€ä¸ªå¤šæ¬¡é‡å¤è®¡åˆ’
         {
-            //ÅĞ¶ÏºÏ·¨ÊäÈë
+            //åˆ¤æ–­åˆæ³•è¾“å…¥
             string str;
             do
             {
-                cout << "ÕâÊÇÒ»¸ö¶à´ÎÖØ¸´¼Æ»®£¬ÊÇ·ñÉ¾³ıËùÓĞÕâĞ©¼Æ»®£¿£¨yes or no£©:";
+                cout << "è¿™æ˜¯ä¸€ä¸ªå¤šæ¬¡é‡å¤è®¡åˆ’ï¼Œæ˜¯å¦åˆ é™¤æ‰€æœ‰è¿™äº›è®¡åˆ’ï¼Ÿï¼ˆyes or noï¼‰:";
                 if (getLineVar(cin, str))
                     return;
             } while (str != "yes" && str != "no");
-            //ÅĞ¶ÏÊäÈëyes or no
+            //åˆ¤æ–­è¾“å…¥yes or no
             if (str == "yes")
             {
-                for (auto tmpDay : tmpRankDate) //±éÀúÃ¿Ò»¸öÓĞÕâ¸öscheduleµÄÈÕÆÚ
+                for (auto tmpDay : tmpRankDate) //éå†æ¯ä¸€ä¸ªæœ‰è¿™ä¸ªscheduleçš„æ—¥æœŸ
                 {
                     auto it_tmpDate = findDate(tmpDay);
 
-                    //ÔÚµ±ÌìscheduleÁĞ±íÖĞÉ¾³ıÕâ¸öscheduleµÄÖ¸Õë
+                    //åœ¨å½“å¤©scheduleåˆ—è¡¨ä¸­åˆ é™¤è¿™ä¸ªscheduleçš„æŒ‡é’ˆ
                     auto tmpIt = find(it_tmpDate->scheduleList.begin(), it_tmpDate->scheduleList.end(), tmpDPschedule);
                     if (tmpIt != it_tmpDate->scheduleList.end())
                         it_tmpDate->scheduleList.erase(tmpIt);
-                    //Èç¹ûÉ¾¿ÕÁË¾Í°ÑÕâÌìÉ¾ÁË
+                    //å¦‚æœåˆ ç©ºäº†å°±æŠŠè¿™å¤©åˆ äº†
                     if (it_tmpDate->scheduleList.size() == 0)
                         globalPlan.erase(it_tmpDate);
                 }
-                delete tmpDPschedule; //ÊÍ·ÅÕâ¸öscheduleµÄÄÚ´æ
+                delete tmpDPschedule; //é‡Šæ”¾è¿™ä¸ªscheduleçš„å†…å­˜
                 deleteSchedule(tmpDPschedule);
             }
-            else //²»ÒªÈ«É¾ÁË
+            else //ä¸è¦å…¨åˆ äº†
             {
-                //¸ÄµôÕâ¸öscheduleµÄrankDate
+                //æ”¹æ‰è¿™ä¸ªscheduleçš„rankDate
                 tmpDPschedule->eraseRankDate(theDate);
-                it_theDate->scheduleList.erase(it_theDate->scheduleList.begin() + planRank - 1); //ÔÚÑ¡ÖĞÌìÊıÖĞÉ¾³ıÕâ¸ö¿Î³ÌµÄµØÖ·
-                if (it_theDate->scheduleList.size() == 0)                                        //Èç¹ûÉ¾¿ÕÁË¾Í°ÑÕâÌìÉ¾ÁË
+                it_theDate->scheduleList.erase(it_theDate->scheduleList.begin() + planRank - 1); //åœ¨é€‰ä¸­å¤©æ•°ä¸­åˆ é™¤è¿™ä¸ªè¯¾ç¨‹çš„åœ°å€
+                if (it_theDate->scheduleList.size() == 0)                                        //å¦‚æœåˆ ç©ºäº†å°±æŠŠè¿™å¤©åˆ äº†
                     globalPlan.erase(it_theDate);
             }
         }
-        else //Õâ²»ÊÇ¸ö¶à´ÎÖØ¸´µÄÈÎÎñ
+        else //è¿™ä¸æ˜¯ä¸ªå¤šæ¬¡é‡å¤çš„ä»»åŠ¡
         {
-            delete tmpDPschedule; //Ö±½ÓÊÍ·ÅµôÄÚ´æ
+            delete tmpDPschedule; //ç›´æ¥é‡Šæ”¾æ‰å†…å­˜
             deleteSchedule(tmpDPschedule);
             it_theDate->scheduleList.erase(it_theDate->scheduleList.begin() + planRank - 1);
-            //Èç¹ûÉ¾¿ÕÁË¾Í°ÑÕâÌìÉ¾ÁË
+            //å¦‚æœåˆ ç©ºäº†å°±æŠŠè¿™å¤©åˆ äº†
             if (it_theDate->scheduleList.size() == 0)
                 globalPlan.erase(it_theDate);
         }
     }
-    cout << "***************É¾³ı³É¹¦*********************" << endl;
+    cout << "***************åˆ é™¤æˆåŠŸ*********************" << endl;
     system("pause");
 }
 
 void resetPlan(int week)
 {
-    //ÅĞ¶ÏĞŞ¸ÄÀàĞÍ
-    cout << "ÄúÏë¸ü¸ÄÒÑ°²ÅÅµÄ¼Æ»®Î´»¹ÊÇÊ±¼äµÄ¼Æ»®£¿£¨0¡¢ÒÑ°²ÅÅ 1¡¢Î´°²ÅÅ£©£º";
+    //åˆ¤æ–­ä¿®æ”¹ç±»å‹
+    cout << "æ‚¨æƒ³æ›´æ”¹å·²å®‰æ’çš„è®¡åˆ’æœªè¿˜æ˜¯æ—¶é—´çš„è®¡åˆ’ï¼Ÿï¼ˆ0ã€å·²å®‰æ’ 1ã€æœªå®‰æ’ï¼‰ï¼š";
     int option;
     if (getLineVar(cin, option))
         return;
@@ -586,17 +586,17 @@ void resetPlan(int week)
     {
         if (globalNoPlanSchedule.size() == 0)
         {
-            cout << "±§Ç¸£¬Ã»ÓĞÎ´°²ÅÅµÄ¼Æ»®£¬ÇëÏÈÌí¼Ó°É£¡" << endl;
+            cout << "æŠ±æ­‰ï¼Œæ²¡æœ‰æœªå®‰æ’çš„è®¡åˆ’ï¼Œè¯·å…ˆæ·»åŠ å§ï¼" << endl;
             system("pause");
             return;
         }
         int choice;
-        cout << "ÄúÏëĞŞ¸ÄµÚ¼¸¸ö¼Æ»®£¿£¨1-" << globalNoPlanSchedule.size() << "£©£º";
+        cout << "æ‚¨æƒ³ä¿®æ”¹ç¬¬å‡ ä¸ªè®¡åˆ’ï¼Ÿï¼ˆ1-" << globalNoPlanSchedule.size() << "ï¼‰ï¼š";
         if (getLineVar(cin, choice))
             return;
         while (choice > globalNoPlanSchedule.size() || choice < 1)
         {
-            cout << "±§Ç¸£¬ÄúµÄÊäÈëÓĞÎó£¬Çë¼ì²éºóÖØĞÂÊäÈë";
+            cout << "æŠ±æ­‰ï¼Œæ‚¨çš„è¾“å…¥æœ‰è¯¯ï¼Œè¯·æ£€æŸ¥åé‡æ–°è¾“å…¥";
             if (getLineVar(cin, choice))
                 return;
         }
@@ -608,7 +608,7 @@ void resetPlan(int week)
     {
 
         int weekday, planRank;
-        cout << "ÄúÏëĞŞ¸ÄÖÜ¼¸µÄ¼Æ»®£¨1-7£©£º";
+        cout << "æ‚¨æƒ³ä¿®æ”¹å‘¨å‡ çš„è®¡åˆ’ï¼ˆ1-7ï¼‰ï¼š";
         if (getLineVar(cin, weekday))
             return;
 
@@ -616,10 +616,10 @@ void resetPlan(int week)
         auto it_theDate = findDate(theDate);
 
         if (it_theDate->Date == theDate)
-            cout << "ÄúÏëĞŞ¸ÄµÚ¼¸¸ö¼Æ»®£¨1-" << it_theDate->scheduleList.size() << "£©£º";
+            cout << "æ‚¨æƒ³ä¿®æ”¹ç¬¬å‡ ä¸ªè®¡åˆ’ï¼ˆ1-" << it_theDate->scheduleList.size() << "ï¼‰ï¼š";
         else
         {
-            cout << "±§Ç¸£¬ËùÑ¡µÄÈÕÆÚÃ»ÓĞ¼Æ»®£¬ÇëÏÈÌí¼Ó°É£¡" << endl;
+            cout << "æŠ±æ­‰ï¼Œæ‰€é€‰çš„æ—¥æœŸæ²¡æœ‰è®¡åˆ’ï¼Œè¯·å…ˆæ·»åŠ å§ï¼" << endl;
             system("pause");
             return;
         }
@@ -627,20 +627,20 @@ void resetPlan(int week)
         if (getLineVar(cin, planRank))
             return;
         auto it_schedule = it_theDate->scheduleList.begin() + planRank - 1;
-        auto tmpEPschedule = *(it_schedule);             //ÒªĞŞ¸ÄµÄscheduleµÄÖ¸Õë
-        auto tmpRankDate = tmpEPschedule->getRankDate(); //ÒªĞŞ¸ÄµÄscheduleµÄÖÜÊıÁĞ±í
+        auto tmpEPschedule = *(it_schedule);             //è¦ä¿®æ”¹çš„scheduleçš„æŒ‡é’ˆ
+        auto tmpRankDate = tmpEPschedule->getRankDate(); //è¦ä¿®æ”¹çš„scheduleçš„å‘¨æ•°åˆ—è¡¨
 
-        if (tmpRankDate.size() > 1) //ÕâÊÇÒ»¸ö¶à´ÎÖØ¸´¼Æ»®
+        if (tmpRankDate.size() > 1) //è¿™æ˜¯ä¸€ä¸ªå¤šæ¬¡é‡å¤è®¡åˆ’
         {
-            //ÅĞ¶ÏºÏ·¨ÊäÈë
+            //åˆ¤æ–­åˆæ³•è¾“å…¥
             string str;
             do
             {
-                cout << "ÕâÊÇÒ»¸ö¶à´ÎÖØ¸´¼Æ»®£¬ÊÇ·ñĞŞ¸ÄËùÓĞÕâĞ©¼Æ»®£¿£¨yes or no£©:";
+                cout << "è¿™æ˜¯ä¸€ä¸ªå¤šæ¬¡é‡å¤è®¡åˆ’ï¼Œæ˜¯å¦ä¿®æ”¹æ‰€æœ‰è¿™äº›è®¡åˆ’ï¼Ÿï¼ˆyes or noï¼‰:";
                 if (getLineVar(cin, str))
                     return;
             } while (str != "yes" && str != "no");
-            //ÅĞ¶ÏÊäÈëyes or no
+            //åˆ¤æ–­è¾“å…¥yes or no
             if (str == "yes")
             {
                 auto tmpScheduleP = tmpEPschedule->reset();
@@ -649,39 +649,39 @@ void resetPlan(int week)
                     return;
                 }
 
-                for (auto tmpDay : tmpRankDate) //±éÀúÃ¿Ò»¸öÓĞÕâ¸öscheduleµÄÖÜÊı
+                for (auto tmpDay : tmpRankDate) //éå†æ¯ä¸€ä¸ªæœ‰è¿™ä¸ªscheduleçš„å‘¨æ•°
                 {
                     auto it_tmpDate = findDate(tmpDay);
 
-                    //±éÀúµ±ÌìµÄscheduleÕÒµ½ÒªÉ¾³ıµÄschedule²¢É¾³ı
+                    //éå†å½“å¤©çš„scheduleæ‰¾åˆ°è¦åˆ é™¤çš„scheduleå¹¶åˆ é™¤
                     auto tmpIt = find(it_tmpDate->scheduleList.begin(), it_tmpDate->scheduleList.end(), tmpEPschedule);
                     if (tmpIt != it_tmpDate->scheduleList.end())
                         it_tmpDate->scheduleList.erase(tmpIt);
 
-                    //Èç¹ûÉ¾¿ÕÁË¾Í°ÑÕâÌìÉ¾ÁË
+                    //å¦‚æœåˆ ç©ºäº†å°±æŠŠè¿™å¤©åˆ äº†
                     if (it_tmpDate->scheduleList.size() == 0)
                         globalPlan.erase(it_tmpDate);
                 }
-                insertPlan(tmpScheduleP); //¸ÄÍêÖ®ºó²å»ØÈ¥
+                insertPlan(tmpScheduleP); //æ”¹å®Œä¹‹åæ’å›å»
             }
-            else //Ö»¸ÄÒ»¸ö
+            else //åªæ”¹ä¸€ä¸ª
             {
                 auto tmpScheduleP = tmpEPschedule->reset(tmpEPschedule, theDate);
                 if (tmpScheduleP == NULL)
                 {
                     return;
                 }
-                //¸ÄµôÕâ¸öscheduleµÄrankDate
+                //æ”¹æ‰è¿™ä¸ªscheduleçš„rankDate
                 tmpEPschedule->eraseRankDate(theDate);
-                //ÔÚÑ¡ÖĞÌìÊıÖĞÉ¾³ıÕâ¸öscheduleµÄµØÖ·
+                //åœ¨é€‰ä¸­å¤©æ•°ä¸­åˆ é™¤è¿™ä¸ªscheduleçš„åœ°å€
                 it_theDate->scheduleList.erase(it_schedule);
-                //Èç¹ûÉ¾¿ÕÁË¾Í°ÑÕâÌìÉ¾ÁË
+                //å¦‚æœåˆ ç©ºäº†å°±æŠŠè¿™å¤©åˆ äº†
                 if (it_theDate->scheduleList.size() == 0)
                     globalPlan.erase(it_theDate);
-                insertPlan(tmpScheduleP); //¸ÄÍêÖ®ºó²å»ØÈ¥
+                insertPlan(tmpScheduleP); //æ”¹å®Œä¹‹åæ’å›å»
             }
         }
-        else //Õâ²»ÊÇ¸ö¶à´ÎÖØ¸´µÄÈÎÎñ
+        else //è¿™ä¸æ˜¯ä¸ªå¤šæ¬¡é‡å¤çš„ä»»åŠ¡
         {
 
             auto tmpScheduleP = tmpEPschedule->reset();
@@ -691,22 +691,22 @@ void resetPlan(int week)
             }
             it_theDate->scheduleList.erase(it_schedule);
             deleteSchedule(tmpEPschedule);
-            //Èç¹ûÉ¾¿ÕÁË¾Í°ÑÕâÌìÉ¾ÁË
+            //å¦‚æœåˆ ç©ºäº†å°±æŠŠè¿™å¤©åˆ äº†
             if (it_theDate->scheduleList.size() == 0)
                 globalPlan.erase(it_theDate);
 
-            //µ÷ÓÃ×ÔÉíº¯ÊıĞŞ¸Ä
+            //è°ƒç”¨è‡ªèº«å‡½æ•°ä¿®æ”¹
             insertPlan(tmpScheduleP);
         }
     }
-    cout << "*****************ĞŞ¸Ä³É¹¦*********************" << endl;
+    cout << "*****************ä¿®æ”¹æˆåŠŸ*********************" << endl;
     system("pause");
 }
 
 void submit(int week)
 {
     int weekday, planRank;
-    cout << "ÄúÏëÌá½»ÖÜ¼¸µÄ¼Æ»®£¨1-7£©£º";
+    cout << "æ‚¨æƒ³æäº¤å‘¨å‡ çš„è®¡åˆ’ï¼ˆ1-7ï¼‰ï¼š";
     if (getLineVar(cin, weekday))
         return;
 
@@ -714,10 +714,10 @@ void submit(int week)
     auto it_theDate = findDate(theDate);
 
     if (it_theDate->Date == theDate)
-        cout << "ÄúÏëÌá½»µÚ¼¸¸ö¼Æ»®£¨1-" << it_theDate->scheduleList.size() << "£©£º";
+        cout << "æ‚¨æƒ³æäº¤ç¬¬å‡ ä¸ªè®¡åˆ’ï¼ˆ1-" << it_theDate->scheduleList.size() << "ï¼‰ï¼š";
     else
     {
-        cout << "±§Ç¸£¬ËùÑ¡µÄÈÕÆÚÃ»ÓĞ¼Æ»®£¬ÇëÏÈÌí¼Ó°É£¡" << endl;
+        cout << "æŠ±æ­‰ï¼Œæ‰€é€‰çš„æ—¥æœŸæ²¡æœ‰è®¡åˆ’ï¼Œè¯·å…ˆæ·»åŠ å§ï¼" << endl;
         system("pause");
         return;
     }
@@ -725,21 +725,21 @@ void submit(int week)
     if (getLineVar(cin, planRank))
         return;
     auto it_schedule = it_theDate->scheduleList.begin() + planRank - 1;
-    auto tmpSPschedule = *(it_schedule);             //ÒªĞŞ¸ÄµÄscheduleµÄÖ¸Õë
-    auto tmpRankDate = tmpSPschedule->getRankDate(); //ÒªĞŞ¸ÄµÄscheduleµÄÖÜÊıÁĞ±í
+    auto tmpSPschedule = *(it_schedule);             //è¦ä¿®æ”¹çš„scheduleçš„æŒ‡é’ˆ
+    auto tmpRankDate = tmpSPschedule->getRankDate(); //è¦ä¿®æ”¹çš„scheduleçš„å‘¨æ•°åˆ—è¡¨
 
-    if (tmpRankDate.size() > 1) //ÕâÊÇÒ»¸ö¶à´ÎÖØ¸´¼Æ»®
+    if (tmpRankDate.size() > 1) //è¿™æ˜¯ä¸€ä¸ªå¤šæ¬¡é‡å¤è®¡åˆ’
     {
-        //ÅĞ¶ÏºÏ·¨ÊäÈë
+        //åˆ¤æ–­åˆæ³•è¾“å…¥
         string str;
         do
         {
-            cout << "ÕâÊÇÒ»¸ö¶à´ÎÖØ¸´¼Æ»®£¬ÊÇ·ñÌá½»ËùÓĞÕâĞ©¼Æ»®£¿£¨yes or no£©:";
+            cout << "è¿™æ˜¯ä¸€ä¸ªå¤šæ¬¡é‡å¤è®¡åˆ’ï¼Œæ˜¯å¦æäº¤æ‰€æœ‰è¿™äº›è®¡åˆ’ï¼Ÿï¼ˆyes or noï¼‰:";
             if (getLineVar(cin, str))
                 return;
         } while (str != "yes" && str != "no");
-        //ÅĞ¶ÏÊäÈëyes or no
-        if (str == "no") //Ö»¸ÄÒ»¸ö
+        //åˆ¤æ–­è¾“å…¥yes or no
+        if (str == "no") //åªæ”¹ä¸€ä¸ª
         {
             tmpSPschedule->submit(theDate);
             return;
@@ -751,13 +751,13 @@ void submit(int week)
 void listRecentSchedule(int week)
 {
     system("cls");
-    cout << "¡ñ";
+    cout << "â—";
     for (int i = 0; i < 48; i++)
-        cout << "¡ñ";
-    cout << "¡ñ" << endl;
+        cout << "â—";
+    cout << "â—" << endl;
 
-    cout << setw(98) << "¡ñ"
-         << "¡ñ" << endl;
+    cout << setw(98) << "â—"
+         << "â—" << endl;
 
     if (globalAllSchedule.size() != 0)
     {
@@ -765,21 +765,21 @@ void listRecentSchedule(int week)
         int i = 1;
         for (auto a : globalAllSchedule)
         {
-            cout << setw(5) << "¡ñ" << setw(93) << to_string(i) + "¡¢" + getDataText(a->getRecentDate(getNowDate())) + "   " + a->printOut(getNowDate()) << "¡ñ" << endl;
+            cout << setw(5) << "â—" << setw(93) << to_string(i) + "ã€" + getDataText(a->getRecentDate(getNowDate())) + "   " + a->printOut(getNowDate()) << "â—" << endl;
             i++;
         }
     }
     else
     {
-        cout << setw(40) << left << "¡ñ"
-             << "»¹Ã»ÓĞ¼Æ»®£¡"
-             << setw(40) << right << "¡ñ"
+        cout << setw(40) << left << "â—"
+             << "è¿˜æ²¡æœ‰è®¡åˆ’ï¼"
+             << setw(40) << right << "â—"
              << endl;
     }
-    cout << setw(98) << left << "¡ñ"
-         << "¡ñ" << endl;
+    cout << setw(98) << left << "â—"
+         << "â—" << endl;
     for (int i = 0; i < 50; i++)
-        cout << "¡ñ";
+        cout << "â—";
     cout << endl;
 
     system("pause");
@@ -793,15 +793,15 @@ int main()
         do
         {
             system("cls");
-            cout << "Äú»¹Ã»ÓĞÉèÖÃ»ù±¾ĞÅÏ¢£¡" << endl;
+            cout << "æ‚¨è¿˜æ²¡æœ‰è®¾ç½®åŸºæœ¬ä¿¡æ¯ï¼" << endl;
         } while (!settingInformation());
     }
     int week = getWeek(getNowDate());
     do
     {
         listSchedule(week);
-        cout << "***************************************ÇëÑ¡Ôñ²Ù×÷***************************************************" << endl
-             << "\t1¡¢Ôö¼Ó¼Æ»®\t2¡¢É¾³ı¼Æ»®\t3¡¢ÏÔÊ¾ÉÏÖÜ¼Æ»®\t4¡¢ÏÔÊ¾ÏÂÖÜ¼Æ»®\t5¡¢ĞŞ¸Ä¼Æ»®\n\t6¡¢ÁĞ³ö×î½üÈÎÎñ\t7¡¢ÖÜÊıÌø×ª\t8¡¢ÉèÖÃĞÅÏ¢\t9¡¢Ìá½»ÈÎÎñ\t10¡¢±£´æ\n\t\t\t\t\t11¡¢ÍË³ö" << endl;
+        cout << "***************************************è¯·é€‰æ‹©æ“ä½œ***************************************************" << endl
+             << "\t1ã€å¢åŠ è®¡åˆ’\t2ã€åˆ é™¤è®¡åˆ’\t3ã€æ˜¾ç¤ºä¸Šå‘¨è®¡åˆ’\t4ã€æ˜¾ç¤ºä¸‹å‘¨è®¡åˆ’\t5ã€ä¿®æ”¹è®¡åˆ’\n\t6ã€åˆ—å‡ºæœ€è¿‘ä»»åŠ¡\t7ã€å‘¨æ•°è·³è½¬\t8ã€è®¾ç½®ä¿¡æ¯\t9ã€æäº¤ä»»åŠ¡\t10ã€ä¿å­˜\n\t\t\t\t\t11ã€é€€å‡º" << endl;
         if (getLineVar(cin, operation))
             operation = 11;
         switch (operation)
@@ -825,7 +825,7 @@ int main()
             listRecentSchedule(week);
             break;
         case 7:
-            cout << "Ìø×ªµ½£¨ÖÜ£©£º";
+            cout << "è·³è½¬åˆ°ï¼ˆå‘¨ï¼‰ï¼š";
             getLineVar(cin, week);
             break;
         case 8:

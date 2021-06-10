@@ -19,11 +19,11 @@ string course::printOut(timeDate theDate)
 {
     string str;
     str += getTimeMonentText(getStartTime()) + " to " + getTimeMonentText(getEndTime()) + " " + name;
-    if (site != "" && site != " " && site != "ÎŞ")
+    if (site != "" && site != " " && site != "æ— ")
         str += " at " + site;
     if (isSubmit[theDate])
     {
-        str += " (ÒÑÍê³É)";
+        str += " (å·²å®Œæˆ)";
     }
     return str;
 }
@@ -48,23 +48,23 @@ course *course::addCourse()
 {
     int weekday, scheduleRank, scheduleNum;
     string name, site, str;
-    cout << "ÇëÊäÈë¿Î³ÌÔÚÖÜ¼¸(1-7)£º";
+    cout << "è¯·è¾“å…¥è¯¾ç¨‹åœ¨å‘¨å‡ (1-7)ï¼š";
     if (getLineVar(cin, weekday))
         return NULL;
-    cout << "ÇëÊäÈë¿Î³ÌÊÇµÚ¼¸½Ú¿Î¿ªÊ¼(1-" << g_timeTab.size() << ")£º";
+    cout << "è¯·è¾“å…¥è¯¾ç¨‹æ˜¯ç¬¬å‡ èŠ‚è¯¾å¼€å§‹(1-" << g_timeTab.size() << ")ï¼š";
     if (getLineVar(cin, scheduleRank))
         return NULL;
-    cout << "ÇëÊäÈë×Ü¹²³ÖĞø¼¸½Ú¿Î£º(1-" << g_timeTab.size() - scheduleRank + 1 << ")£º";
+    cout << "è¯·è¾“å…¥æ€»å…±æŒç»­å‡ èŠ‚è¯¾ï¼š(1-" << g_timeTab.size() - scheduleRank + 1 << ")ï¼š";
     if (getLineVar(cin, scheduleNum))
         return NULL;
-    cout << "ÇëÊäÈë¿Î³ÌÃû£º";
+    cout << "è¯·è¾“å…¥è¯¾ç¨‹åï¼š";
     getline(cin, name);
-    cout << "ÇëÊäÈë¿Î³ÌµØµã£º";
+    cout << "è¯·è¾“å…¥è¯¾ç¨‹åœ°ç‚¹ï¼š";
     getline(cin, site);
-    cout << "ÇëÊäÈëÉÏ¿ÎÖÜÊı(ÒÔ¶ººÅ·Ö¸ô)£º";
+    cout << "è¯·è¾“å…¥ä¸Šè¯¾å‘¨æ•°(ä»¥é€—å·åˆ†éš”)ï¼š";
     getline(cin, str);
     vector<int> result = toIntVec(splitString(str, ','));
-    //resultÏòÁ¿¾ÍÊÇÉÏ¿ÎÖÜÊı
+    //resultå‘é‡å°±æ˜¯ä¸Šè¯¾å‘¨æ•°
     return (new course(name, site, scheduleRank, scheduleNum, result, weekday));
 }
 
@@ -112,8 +112,8 @@ schedule *course::reset(schedule *sp, timeDate theData)
         delete tmpCourseP;
         tmpCourseP = this;
     }
-    cout << "ÄúÏëĞŞ¸ÄÊ²Ã´£¿" << endl
-         << "1¡¢Ê±¼ä  2¡¢¿Î³ÌÃû  3¡¢¿Î³ÌµØµã" << endl;
+    cout << "æ‚¨æƒ³ä¿®æ”¹ä»€ä¹ˆï¼Ÿ" << endl
+         << "1ã€æ—¶é—´  2ã€è¯¾ç¨‹å  3ã€è¯¾ç¨‹åœ°ç‚¹" << endl;
     int option;
     if (getLineVar(cin, option))
         return NULL;
@@ -125,19 +125,19 @@ schedule *course::reset(schedule *sp, timeDate theData)
         int weekday, scheduleRank, scheduleNum;
         string str;
         vector<int> result;
-        cout << "ÇëÊäÈë¿Î³ÌÔÚÖÜ¼¸(1-7)£º";
+        cout << "è¯·è¾“å…¥è¯¾ç¨‹åœ¨å‘¨å‡ (1-7)ï¼š";
         if (getLineVar(cin >> weekday))
             return NULL;
-        cout << "ÇëÊäÈë¿Î³ÌÊÇµÚ¼¸½Ú¿Î¿ªÊ¼(1-" << g_timeTab.size() << ")£º";
+        cout << "è¯·è¾“å…¥è¯¾ç¨‹æ˜¯ç¬¬å‡ èŠ‚è¯¾å¼€å§‹(1-" << g_timeTab.size() << ")ï¼š";
         if (getLineVar(cin >> scheduleRank))
             return NULL;
-        cout << "ÇëÊäÈë×Ü¹²³ÖĞø¼¸½Ú¿Î£º(1-" << g_timeTab.size() - scheduleRank + 1 << ")£º";
+        cout << "è¯·è¾“å…¥æ€»å…±æŒç»­å‡ èŠ‚è¯¾ï¼š(1-" << g_timeTab.size() - scheduleRank + 1 << ")ï¼š";
         if (getLineVar(cin >> scheduleNum))
             return NULL;
-        cout << "ÇëÊäÈëÉÏ¿ÎÖÜÊı(ÒÔ¶ººÅ·Ö¸ô)£º";
+        cout << "è¯·è¾“å…¥ä¸Šè¯¾å‘¨æ•°(ä»¥é€—å·åˆ†éš”)ï¼š";
         getline(cin, str);
         result = toIntVec(splitString(str));
-        // resultÏòÁ¿¾ÍÊÇÉÏ¿ÎÖÜÊı
+        // resultå‘é‡å°±æ˜¯ä¸Šè¯¾å‘¨æ•°
         tmpCourseP->courseWeekDay = weekday;
         tmpCourseP->courseWeeks = result;
         tmpCourseP->rank = scheduleRank;
@@ -145,12 +145,12 @@ schedule *course::reset(schedule *sp, timeDate theData)
         break;
     }
     case 2:
-        cout << "ÇëÊäÈë¿Î³ÌÃû£º";
+        cout << "è¯·è¾“å…¥è¯¾ç¨‹åï¼š";
 
         getline(cin, tmpCourseP->name);
         break;
     case 3:
-        cout << "ÇëÊäÈë¿Î³ÌµØµã£º";
+        cout << "è¯·è¾“å…¥è¯¾ç¨‹åœ°ç‚¹ï¼š";
 
         getline(cin, tmpCourseP->site);
         break;

@@ -26,14 +26,14 @@ schedule *work::addWork()
     timeMonent _timeLong = 0;
     do
     {
-        cout << "ÊÇ·ñ°²ÅÅÊ±¼ä£¿£¨yes or no£©:";
+        cout << "æ˜¯å¦å®‰æŽ’æ—¶é—´ï¼Ÿï¼ˆyes or noï¼‰:";
         if (getLineVar(cin, str))
             return NULL;
     } while (str != "yes" && str != "no");
     if (str == "yes")
     {
         int year, mon, day, hour, min;
-        cout << "ÇëÊäÈë°²ÅÅµÄÊ±¼ä£¨Äê ÔÂ ÈÕ Ð¡Ê± ·ÖÖÓ£©£º";
+        cout << "è¯·è¾“å…¥å®‰æŽ’çš„æ—¶é—´ï¼ˆå¹´ æœˆ æ—¥ å°æ—¶ åˆ†é’Ÿï¼‰ï¼š";
         if (getLineVar(cin, year, mon, day, hour, min))
             return NULL;
         time_t t = 0;
@@ -42,7 +42,7 @@ schedule *work::addWork()
         tmpDate->tm_mon = mon - 1;
         tmpDate->tm_mday = day;
         _rankTime = (mktime(tmpDate) / (24 * 3600)) * 24 * 60 + hour * 60 + min;
-        cout << "ÇëÊäÈëÐèÒª¶à³¤Ê±¼ä£¨Ð¡Ê± ·ÖÖÓ£©£º";
+        cout << "è¯·è¾“å…¥éœ€è¦å¤šé•¿æ—¶é—´ï¼ˆå°æ—¶ åˆ†é’Ÿï¼‰ï¼š";
         if (getLineVar(cin, hour, min))
             return NULL;
         _timeLong = hour * 60 + min;
@@ -51,18 +51,18 @@ schedule *work::addWork()
     int year, mon, day;
     time_t t = 0;
     tm *tmpDate = localtime(&t);
-    cout << "ÇëÊäÈëÊÂÏî½ØÖ¹ÈÕÆÚ£¨Äê ÔÂ ÈÕ£©£º";
+    cout << "è¯·è¾“å…¥äº‹é¡¹æˆªæ­¢æ—¥æœŸï¼ˆå¹´ æœˆ æ—¥ï¼‰ï¼š";
     if (getLineVar(cin, year, mon, day))
         return NULL;
     tmpDate->tm_year = year - 1900;
     tmpDate->tm_mon = mon - 1;
     tmpDate->tm_mday = day;
-    //ºËÐÄ
-    _DDLDate = mktime(tmpDate) / (24 * 3600); //È¡µÃÈÕÆÚÊ±¼ä´Á
-    //ºËÐÄ
-    cout << "ÇëÊäÈë×÷ÒµÃû³Æ£º";
+    //æ ¸å¿ƒ
+    _DDLDate = mktime(tmpDate) / (24 * 3600); //å–å¾—æ—¥æœŸæ—¶é—´æˆ³
+    //æ ¸å¿ƒ
+    cout << "è¯·è¾“å…¥ä½œä¸šåç§°ï¼š";
     getline(cin, _name);
-    cout << "ÇëÊäÈë±¸×¢£º";
+    cout << "è¯·è¾“å…¥å¤‡æ³¨ï¼š";
     getline(cin, _remark);
     return (new work(_name, _remark, _DDLDate, _rankTime, _timeLong));
 }
@@ -83,10 +83,10 @@ string work::printOut(timeDate theDate)
     {
         str += getTimeMonentText(getStartTime()) + " to " + getTimeMonentText(getStartTime() + timeLong) + " " + name;
     }
-    if (remark != "" && remark != " " && remark != "ÎÞ")
+    if (remark != "" && remark != " " && remark != "æ— ")
         str += " (" + remark + ")";
     if (isSubmit[theDate])
-        str += "ÒÑÍê³É";
+        str += "å·²å®Œæˆ";
     return str;
 }
 
@@ -103,8 +103,8 @@ timeDate work::getRecentDate(timeDate theDate)
 schedule *work::reset(schedule *sp, timeDate theData)
 {
     string str;
-    cout << "ÄúÏëÐÞ¸ÄÊ²Ã´£¿" << endl
-         << "1¡¢°²ÅÅÊ±¼ä 2¡¢DDLÊ±¼ä 3¡¢×÷ÒµÃû 4¡¢±¸×¢" << endl;
+    cout << "æ‚¨æƒ³ä¿®æ”¹ä»€ä¹ˆï¼Ÿ" << endl
+         << "1ã€å®‰æŽ’æ—¶é—´ 2ã€DDLæ—¶é—´ 3ã€ä½œä¸šå 4ã€å¤‡æ³¨" << endl;
     int option;
     if (getLineVar(cin, option))
         return NULL;
@@ -113,7 +113,7 @@ schedule *work::reset(schedule *sp, timeDate theData)
     case 1:
     {
         int year, mon, day, hour, min;
-        cout << "ÇëÊäÈë°²ÅÅµÄÈÕÆÚ£¨Äê ÔÂ ÈÕ£©£º";
+        cout << "è¯·è¾“å…¥å®‰æŽ’çš„æ—¥æœŸï¼ˆå¹´ æœˆ æ—¥ï¼‰ï¼š";
         if (getLineVar(cin, year, mon, day, hour, min))
             return NULL;
         time_t t = 0;
@@ -123,23 +123,23 @@ schedule *work::reset(schedule *sp, timeDate theData)
         tmpDate->tm_mday = day;
         rankTime = (mktime(tmpDate) / (24 * 3600)) * 24 * 60 + hour * 60 + min;
 
-        cout << "ÇëÊäÈëÐèÒª¶à³¤Ê±¼ä£¨Ð¡Ê± ·ÖÖÓ£©£º";
+        cout << "è¯·è¾“å…¥éœ€è¦å¤šé•¿æ—¶é—´ï¼ˆå°æ—¶ åˆ†é’Ÿï¼‰ï¼š";
         if (getLineVar(cin, hour, min))
             return NULL;
         timeLong = hour * 60 + min;
         break;
     }
     case 2:
-        cout << "ÇëÊäÈëDDLÊ±¼ä£º";
+        cout << "è¯·è¾“å…¥DDLæ—¶é—´ï¼š";
         if (getLineVar(cin, DDLDate))
             return NULL;
         break;
     case 3:
-        cout << "ÇëÊäÈëÐÂ×÷ÒµÃû£º";
+        cout << "è¯·è¾“å…¥æ–°ä½œä¸šåï¼š";
         getline(cin, name);
         break;
     case 4:
-        cout << "ÇëÊäÈëÐÂ±¸×¢£º";
+        cout << "è¯·è¾“å…¥æ–°å¤‡æ³¨ï¼š";
         getline(cin, remark);
         break;
     default:
