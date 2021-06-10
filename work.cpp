@@ -85,14 +85,14 @@ string work::printOut(timeDate theDate)
     }
     if (remark != "" && remark != " " && remark != "无")
         str += " (" + remark + ")";
-    if (isSubmit[theDate])
+    if (isSubmit[rankTime / (24 * 60)])
         str += "   已完成";
     return str;
 }
 
 timeDate work::getRecentDate(timeDate theDate)
 {
-    if (theDate > DDLDate)
+    if (theDate > DDLDate || isSubmit[rankTime / (24 * 60)])
         return -1;
     else if (theDate < rankTime / (60 * 24))
         return rankTime / (60 * 24);

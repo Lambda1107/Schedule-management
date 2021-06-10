@@ -92,7 +92,11 @@ timeDate course::getRecentDate(timeDate theDate)
         }
     }
     if (b)
+    {
+        if (isSubmit[g_startDate + tmpWeek * 7 + tmpWDay - 8])
+            return -1;
         return g_startDate + tmpWeek * 7 + tmpWDay - 8;
+    }
     else
         return -1;
 }
