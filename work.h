@@ -6,14 +6,12 @@
 #define WORK_H
 class work : public schedule
 {
-protected:
+public:
     string name;
     timeDate DDLDate;
     timeDateMonent rankTime;
     timeMonent timeLong;
     string remark;
-
-public:
     work();
     work(string _name, string _remark, timeDate _DDLDate, timeDateMonent _rankTime, timeMonent _timeLong);
     ~work();
@@ -25,6 +23,6 @@ public:
     schedule *reset(schedule *sp = NULL, timeDate theData = 0);
     string store();
     void load(istream &fin);
-    static schedule *addWork();
+    static work *addWork();
 };
 #endif

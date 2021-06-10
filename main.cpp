@@ -8,6 +8,7 @@
 #include "schedule.h"
 #include "course.h"
 #include "work.h"
+#include "works.h"
 #include "arrange.h"
 using namespace std;
 
@@ -452,7 +453,7 @@ void addPlan() //添加计划
 {
     int choice;
     cout << "您想添加哪种计划？" << endl
-         << "1、课程  2、事项 3、作业" << endl;
+         << "1、课程  2、事项  3、单次作业  4、需重复提交作业" << endl;
     if (getLineVar(cin, choice))
         return;
     schedule *tmpSchedule = NULL;
@@ -466,6 +467,9 @@ void addPlan() //添加计划
         break;
     case 3:
         tmpSchedule = work::addWork();
+        break;
+    case 4:
+        tmpSchedule = works::addWorks();
         break;
     default:
         break;
@@ -739,7 +743,7 @@ void submit(int week)
                 return;
         } while (str != "yes" && str != "no");
         //判断输入yes or no
-        if (str == "no") //只改一个
+        if (str == "no") //只提交一个
         {
             tmpSPschedule->submit(theDate);
             return;

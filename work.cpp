@@ -18,7 +18,7 @@ work::work(string _name, string _remark, timeDate _DDLDate, timeDateMonent _rank
 
 work::~work() {}
 
-schedule *work::addWork()
+work *work::addWork()
 {
     string _name, _remark, str;
     timeDate _DDLDate = 0;
@@ -86,7 +86,7 @@ string work::printOut(timeDate theDate)
     if (remark != "" && remark != " " && remark != "无")
         str += " (" + remark + ")";
     if (isSubmit[theDate])
-        str += "已完成";
+        str += "   已完成";
     return str;
 }
 
@@ -165,6 +165,12 @@ string work::store()
           name + "\n" +
           to_string(DDLDate) + " " + to_string(rankTime) + " " + to_string(timeLong) + "\n" +
           remark;
+    str += "\n";
+    for (auto a : isSubmit)
+    {
+        str += to_string(a.first);
+        str += ",";
+    }
     return str;
 }
 
@@ -173,6 +179,13 @@ void work::load(istream &fin)
     getline(fin, name);
     getLineVar(fin, DDLDate, rankTime, timeLong);
     getline(fin, remark);
+    string str;
+    getline(fin, str);
+    vector<timeDate> tmpDateVec = toDateVec(splitString(str));
+    for (auto a : tmpDateVec)
+    {
+        isSubmit[a] = true;
+    }
 }
 
 void work::eraseRankDate(timeDate theRankDate)

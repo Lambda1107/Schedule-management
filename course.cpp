@@ -23,7 +23,7 @@ string course::printOut(timeDate theDate)
         str += " at " + site;
     if (isSubmit[theDate])
     {
-        str += " (已完成)";
+        str += "   已完成";
     }
     return str;
 }
@@ -169,6 +169,12 @@ string course::store()
         str += to_string(a);
         str += ",";
     }
+    str += "\n";
+    for (auto a : isSubmit)
+    {
+        str += to_string(a.first);
+        str += ",";
+    }
     return str;
 }
 void course::load(istream &fin)
@@ -178,8 +184,13 @@ void course::load(istream &fin)
     getline(fin, site);
     getLineVar(fin, rank, rankNum, courseWeekDay);
     getline(fin, str);
-    vector<int> result = toIntVec(splitString(str, ','));
-    courseWeeks = result;
+    courseWeeks = toIntVec(splitString(str, ','));
+    getline(fin, str);
+    vector<timeDate> tmpDateVec = toDateVec(splitString(str));
+    for (auto a : tmpDateVec)
+    {
+        isSubmit[a] = true;
+    }
 }
 
 course::~course()

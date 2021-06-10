@@ -57,7 +57,7 @@ string arrange::printOut(timeDate theDate)
     if (remark != "" && remark != " " && remark != "无")
         str += " (" + remark + ")";
     if (isSubmit[theDate])
-        str += " (已完成)";
+        str += "   已完成";
     return str;
 }
 
@@ -139,6 +139,12 @@ string arrange::store()
         str += to_string(a);
         str += ",";
     }
+    str += "\n";
+    for (auto a : isSubmit)
+    {
+        str += to_string(a.first);
+        str += ",";
+    }
     return str;
 }
 
@@ -151,6 +157,12 @@ void arrange::load(istream &fin)
     getline(fin, remark);
     getline(fin, str);
     rankDate = toDateVec(splitString(str));
+    getline(fin, str);
+    vector<timeDate> tmpDateVec = toDateVec(splitString(str));
+    for (auto a : tmpDateVec)
+    {
+        isSubmit[a] = true;
+    }
 }
 
 schedule *arrange::reset(schedule *sp, timeDate theData)
@@ -212,11 +224,11 @@ schedule *arrange::reset(schedule *sp, timeDate theData)
             }
         }
         tmpArrangeP->rankDate = _rankDate;
-        
+
         break;
     }
     case 2:
-        {
+    {
         cout << "请输入DDL时间（年 月 日）：";
         int year, mon, day;
         if (getLineVar(cin, year, mon, day))
