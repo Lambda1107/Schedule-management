@@ -113,7 +113,7 @@ schedule *work::reset(schedule *sp, timeDate theData)
     case 1:
     {
         int year, mon, day, hour, min;
-        cout << "请输入安排的日期（年 月 日）：";
+        cout << "请输入安排的日期（年 月 日 时 分）：";
         if (getLineVar(cin, year, mon, day, hour, min))
             return NULL;
         time_t t = 0;
