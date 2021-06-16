@@ -113,7 +113,7 @@ schedule *course::reset(schedule *sp, timeDate theData)
     }
     else
     {
-        delete tmpCourseP;
+        // delete tmpCourseP;
         tmpCourseP = this;
     }
     cout << "您想修改什么？" << endl

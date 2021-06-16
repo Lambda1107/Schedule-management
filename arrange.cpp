@@ -177,7 +177,7 @@ schedule *arrange::reset(schedule *sp, timeDate theData)
     }
     else
     {
-        delete tmpArrangeP;
+        // delete tmpArrangeP;
         tmpArrangeP = this;
     }
     cout << "您想修改什么？" << endl
